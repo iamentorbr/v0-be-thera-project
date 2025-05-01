@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { Loader2 } from "lucide-react"
+import { Loader2, AlertCircle } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 
 interface SendReminderDialogProps {
   open: boolean
@@ -51,6 +52,48 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
   const [includeConfirmation, setIncludeConfirmation] = useState(true)
   const [channels, setChannels] = useState<string[]>(["email"])
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [clientPreferences, setClientPreferences] = useState<any>(null)
+  const [isLoadingPreferences, setIsLoadingPreferences] = useState(false)
+
+  useEffect(() => {
+    if (open && session?.clientId) {
+      fetchClientPreferences(session.clientId)
+    }
+  }, [open, session])
+
+  const fetchClientPreferences = async (clientId: string) => {
+    setIsLoadingPreferences(true)
+    try {
+      // Aqui seria a chamada para a API para buscar as preferências do cliente
+      // Por enquanto, vamos apenas simular um atraso e usar dados mockados
+      await new Promise((resolve) => setTimeout(resolve, 500))
+
+      // Dados simulados de preferências do cliente
+      const preferences = {
+        enabled: true,
+        preferredChannel: "email",
+        reminderTimes: ["24h", "1h"],
+        sessionReminders: true,
+        preferredTemplate: "2", // ID do template preferido
+      }
+
+      setClientPreferences(preferences)
+
+      // Pré-selecionar o canal preferido do cliente
+      if (preferences.preferredChannel) {
+        setChannels([preferences.preferredChannel])
+      }
+
+      // Pré-selecionar o template preferido do cliente
+      if (preferences.preferredTemplate) {
+        setSelectedTemplate(preferences.preferredTemplate)
+      }
+    } catch (error) {
+      console.error("Erro ao buscar preferências do cliente:", error)
+    } finally {
+      setIsLoadingPreferences(false)
+    }
+  }
 
   const handleChannelChange = (channel: string, checked: boolean) => {
     if (checked) {
@@ -130,6 +173,25 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
           <DialogDescription>Envie um lembrete para {session?.clientName} sobre a sessão agendada.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
+          {clientPreferences && !clientPreferences.enabled && (
+            <Alert variant="warning">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Este cliente optou por não receber lembretes. Você ainda pode enviar este lembrete manualmente.
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {clientPreferences && clientPreferences.enabled && !clientPreferences.sessionReminders && (
+            <Alert>
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                Este cliente optou por não receber lembretes de sessão. Você ainda pode enviar este lembrete
+                manualmente.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <div className="grid grid-cols-1 gap-4">
             <div className="space-y-2">
               <Label htmlFor="template">Template</Label>
@@ -140,7 +202,7 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
                 <SelectContent>
                   {mockTemplates.map((template) => (
                     <SelectItem key={template.id} value={template.id}>
-                      {template.name}
+                      {template.name} {clientPreferences?.preferredTemplate === template.id && "(Preferido)"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -188,7 +250,9 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
                       checked={channels.includes("email")}
                       onCheckedChange={(checked) => handleChannelChange("email", checked as boolean)}
                     />
-                    <Label htmlFor="channel-email">Email</Label>
+                    <Label htmlFor="channel-email">
+                      Email {clientPreferences?.preferredChannel === "email" && "(Preferido)"}
+                    </Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <Checkbox
@@ -196,7 +260,19 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
                       checked={channels.includes("sms")}
                       onCheckedChange={(checked) => handleChannelChange("sms", checked as boolean)}
                     />
-                    <Label htmlFor="channel-sms">SMS</Label>
+                    <Label htmlFor="channel-sms">
+                      SMS {clientPreferences?.preferredChannel === "sms" && "(Preferido)"}
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="channel-whatsapp"
+                      checked={channels.includes("whatsapp")}
+                      onCheckedChange={(checked) => handleChannelChange("whatsapp", checked as boolean)}
+                    />
+                    <Label htmlFor="channel-whatsapp">
+                      WhatsApp {clientPreferences?.preferredChannel === "whatsapp" && "(Preferido)"}
+                    </Label>
                   </div>
                 </div>
               </div>
