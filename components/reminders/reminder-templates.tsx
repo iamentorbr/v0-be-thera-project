@@ -2,10 +2,9 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { toast } from "@/components/ui/use-toast"
-import { EditReminderTemplateDialog } from "@/components/reminders/edit-reminder-template-dialog"
+import { EditReminderTemplateDialog } from "./edit-reminder-template-dialog"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,75 +14,66 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
+  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Edit, Trash, Copy, Check } from "lucide-react"
+import { toast } from "@/components/ui/use-toast"
+import { Mail, MessageSquare, Pencil, Trash2, Copy } from "lucide-react"
 
-// Dados simulados de templates
+// Dados de exemplo
 const mockTemplates = [
   {
     id: "1",
     name: "Lembrete de Sessão Padrão",
     type: "session-reminder",
     subject: "Lembrete: Sua sessão está agendada para amanhã",
-    body: "Olá {{cliente}},\n\nEste é um lembrete amigável de que você tem uma sessão agendada com {{terapeuta}} amanhã, {{data}} às {{hora}}.\n\nLocal: {{local}}\n\nPor favor, confirme sua presença respondendo a este email ou entrando em contato pelo telefone {{telefone}}.\n\nAtenciosamente,\n{{terapeuta}}",
-    isDefault: true,
+    body: "Olá {{cliente}},\n\nEste é um lembrete de que você tem uma sessão agendada com {{terapeuta}} amanhã, {{data}} às {{hora}}.\n\nLocal: {{local}}\n\nPor favor, confirme sua presença ou entre em contato caso precise reagendar.\n\nAtenciosamente,\n{{terapeuta}}",
     channels: ["email", "sms"],
+    isDefault: true,
   },
   {
     id: "2",
-    name: "Lembrete de Sessão Formal",
-    type: "session-reminder",
-    subject: "Confirmação de Agendamento - {{data}}",
-    body: "Prezado(a) {{cliente}},\n\nGostaríamos de confirmar seu agendamento para o dia {{data}} às {{hora}} com {{terapeuta}}.\n\nLocal: {{local}}\n\nCaso necessite reagendar, por favor entre em contato com antecedência mínima de 24 horas.\n\nAtenciosamente,\n{{terapeuta}}",
-    isDefault: false,
+    name: "Lembrete de Sessão Perdida",
+    type: "missed-session",
+    subject: "Sobre sua sessão de hoje",
+    body: "Olá {{cliente}},\n\nNotamos que você não compareceu à sessão agendada para hoje, {{data}} às {{hora}}.\n\nPor favor, entre em contato para reagendarmos sua sessão.\n\nAtenciosamente,\n{{terapeuta}}",
     channels: ["email"],
+    isDefault: true,
   },
   {
     id: "3",
-    name: "Sessão Perdida",
-    type: "missed-session",
-    subject: "Sobre sua sessão de hoje",
-    body: "Olá {{cliente}},\n\nNotamos que você não compareceu à sessão agendada para hoje, {{data}} às {{hora}}.\n\nEsperamos que esteja tudo bem. Por favor, entre em contato para reagendarmos sua sessão.\n\nAtenciosamente,\n{{terapeuta}}",
-    isDefault: true,
-    channels: ["email", "sms"],
-  },
-  {
-    id: "4",
-    name: "Sessão Cancelada",
+    name: "Lembrete de Sessão Cancelada",
     type: "cancelled-session",
-    subject: "Cancelamento de Sessão - {{data}}",
-    body: "Olá {{cliente}},\n\nEste email confirma o cancelamento da sua sessão que estava agendada para {{data}} às {{hora}}.\n\nCaso deseje reagendar, por favor entre em contato conosco.\n\nAtenciosamente,\n{{terapeuta}}",
+    subject: "Sessão cancelada",
+    body: "Olá {{cliente}},\n\nSua sessão agendada para {{data}} às {{hora}} foi cancelada.\n\nPor favor, entre em contato para reagendarmos.\n\nAtenciosamente,\n{{terapeuta}}",
+    channels: ["email", "sms"],
     isDefault: true,
-    channels: ["email"],
   },
 ]
 
 export function ReminderTemplates() {
   const [templates, setTemplates] = useState(mockTemplates)
-  const [editTemplate, setEditTemplate] = useState<any | null>(null)
-  const [isEditOpen, setIsEditOpen] = useState(false)
-  const [deleteTemplate, setDeleteTemplate] = useState<any | null>(null)
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
+  const [editingTemplate, setEditingTemplate] = useState<any>(null)
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
   const handleEdit = (template: any) => {
-    setEditTemplate(template)
-    setIsEditOpen(true)
+    setEditingTemplate(template)
+    setIsEditDialogOpen(true)
   }
 
-  const handleDelete = (template: any) => {
-    setDeleteTemplate(template)
-    setIsDeleteOpen(true)
+  const handleSave = (updatedTemplate: any) => {
+    setTemplates((prev) => prev.map((template) => (template.id === updatedTemplate.id ? updatedTemplate : template)))
+    toast({
+      title: "Template atualizado",
+      description: `O template "${updatedTemplate.name}" foi atualizado com sucesso.`,
+    })
   }
 
-  const confirmDelete = () => {
-    if (!deleteTemplate) return
-
-    setTemplates((prev) => prev.filter((t) => t.id !== deleteTemplate.id))
+  const handleDelete = (id: string) => {
+    setTemplates((prev) => prev.filter((template) => template.id !== id))
     toast({
       title: "Template excluído",
-      description: `O template "${deleteTemplate.name}" foi excluído com sucesso.`,
+      description: "O template foi excluído com sucesso.",
     })
-    setIsDeleteOpen(false)
   }
 
   const handleDuplicate = (template: any) => {
@@ -100,148 +90,93 @@ export function ReminderTemplates() {
     })
   }
 
-  const handleSetDefault = (template: any) => {
-    setTemplates((prev) =>
-      prev.map((t) => ({
-        ...t,
-        isDefault: t.id === template.id ? true : t.type === template.type ? false : t.isDefault,
-      })),
-    )
-    toast({
-      title: "Template padrão definido",
-      description: `"${template.name}" agora é o template padrão para ${getTemplateTypeName(template.type)}.`,
-    })
-  }
-
-  const getTemplateTypeName = (type: string) => {
+  const getTypeLabel = (type: string) => {
     switch (type) {
       case "session-reminder":
-        return "lembretes de sessão"
+        return "Lembrete de Sessão"
       case "missed-session":
-        return "sessões perdidas"
+        return "Sessão Perdida"
       case "cancelled-session":
-        return "sessões canceladas"
+        return "Sessão Cancelada"
       default:
         return type
     }
   }
 
-  const getTemplateTypeColor = (type: string) => {
-    switch (type) {
-      case "session-reminder":
-        return "default"
-      case "missed-session":
-        return "destructive"
-      case "cancelled-session":
-        return "secondary"
-      default:
-        return "default"
-    }
-  }
-
   return (
     <div className="space-y-4">
-      {templates.map((template) => (
-        <Card key={template.id}>
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <CardTitle className="text-lg">{template.name}</CardTitle>
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {templates.map((template) => (
+          <Card key={template.id} className="flex flex-col">
+            <CardContent className="flex-1 pt-6">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="font-semibold">{template.name}</h4>
                 {template.isDefault && (
                   <Badge variant="outline" className="ml-2">
                     Padrão
                   </Badge>
                 )}
               </div>
-              <Badge variant={getTemplateTypeColor(template.type)}>{getTemplateTypeName(template.type)}</Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="pb-2">
-            <div className="space-y-2">
-              <div>
-                <span className="text-sm font-medium">Assunto: </span>
-                <span className="text-sm text-muted-foreground">{template.subject}</span>
+              <p className="text-sm text-muted-foreground mb-2">{getTypeLabel(template.type)}</p>
+              <div className="flex items-center space-x-1 mb-4">
+                {template.channels.includes("email") && (
+                  <Badge variant="secondary" className="mr-1">
+                    <Mail className="h-3 w-3 mr-1" />
+                    Email
+                  </Badge>
+                )}
+                {template.channels.includes("sms") && (
+                  <Badge variant="secondary">
+                    <MessageSquare className="h-3 w-3 mr-1" />
+                    SMS
+                  </Badge>
+                )}
               </div>
-              <div>
-                <span className="text-sm font-medium">Mensagem:</span>
-                <div className="mt-1 text-sm text-muted-foreground whitespace-pre-line border rounded-md p-3 bg-muted/30">
-                  {template.body}
-                </div>
+              <div className="text-sm border rounded-md p-2 bg-muted/50 max-h-[100px] overflow-y-auto whitespace-pre-wrap">
+                {template.body.substring(0, 100)}
+                {template.body.length > 100 ? "..." : ""}
               </div>
-              <div className="flex items-center space-x-2 mt-2">
-                <span className="text-sm font-medium">Canais:</span>
-                <div className="flex space-x-1">
-                  {template.channels.map((channel) => (
-                    <Badge key={channel} variant="outline">
-                      {channel === "email" ? "Email" : "SMS"}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="flex justify-between pt-2">
-            <div>
-              {!template.isDefault && (
-                <Button variant="outline" size="sm" onClick={() => handleSetDefault(template)}>
-                  <Check className="mr-2 h-4 w-4" />
-                  Definir como padrão
-                </Button>
-              )}
-            </div>
-            <div className="flex space-x-2">
-              <Button variant="outline" size="sm" onClick={() => handleDuplicate(template)}>
-                <Copy className="mr-2 h-4 w-4" />
+            </CardContent>
+            <CardFooter className="flex justify-end gap-2 pt-2">
+              <Button variant="ghost" size="sm" onClick={() => handleDuplicate(template)}>
+                <Copy className="h-4 w-4 mr-1" />
                 Duplicar
               </Button>
-              <Button variant="outline" size="sm" onClick={() => handleEdit(template)}>
-                <Edit className="mr-2 h-4 w-4" />
+              <Button variant="ghost" size="sm" onClick={() => handleEdit(template)}>
+                <Pencil className="h-4 w-4 mr-1" />
                 Editar
               </Button>
-              {!template.isDefault && (
-                <Button variant="outline" size="sm" onClick={() => handleDelete(template)}>
-                  <Trash className="mr-2 h-4 w-4" />
-                  Excluir
-                </Button>
-              )}
-            </div>
-          </CardFooter>
-        </Card>
-      ))}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="sm" disabled={template.isDefault}>
+                    <Trash2 className="h-4 w-4 mr-1" />
+                    Excluir
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Excluir template</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja excluir este template? Esta ação não pode ser desfeita.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleDelete(template.id)}>Excluir</AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
 
-      {/* Diálogo de edição de template */}
-      {editTemplate && (
-        <EditReminderTemplateDialog
-          open={isEditOpen}
-          onOpenChange={setIsEditOpen}
-          template={editTemplate}
-          onSave={(updatedTemplate) => {
-            setTemplates((prev) => prev.map((t) => (t.id === updatedTemplate.id ? { ...t, ...updatedTemplate } : t)))
-            toast({
-              title: "Template atualizado",
-              description: `O template "${updatedTemplate.name}" foi atualizado com sucesso.`,
-            })
-          }}
-        />
-      )}
-
-      {/* Diálogo de confirmação de exclusão */}
-      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Excluir template</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja excluir o template "{deleteTemplate?.name}"? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground">
-              Excluir
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <EditReminderTemplateDialog
+        open={isEditDialogOpen}
+        onOpenChange={setIsEditDialogOpen}
+        template={editingTemplate}
+        onSave={handleSave}
+      />
     </div>
   )
 }

@@ -1,119 +1,62 @@
 "use client"
 
 import { useState } from "react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Mail, MessageSquare, Search, ChevronLeft, ChevronRight, Eye } from "lucide-react"
-import { ViewReminderDialog } from "@/components/reminders/view-reminder-dialog"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Mail, MessageSquare, Search, RefreshCw, Eye } from "lucide-react"
+import { format } from "date-fns"
+import { ptBR } from "date-fns/locale"
 
-// Dados simulados de histórico de lembretes
-const mockReminderHistory = [
+// Dados de exemplo
+const mockHistory = [
   {
     id: "1",
-    client: {
-      id: "1",
-      name: "Maria Santos",
-    },
-    session: {
-      id: "101",
-      date: new Date(2024, 4, 15),
-      time: "14:00",
-    },
+    clientName: "João Silva",
+    templateName: "Lembrete de Sessão Padrão",
     type: "session-reminder",
     channel: "email",
-    sentAt: new Date(2024, 4, 14, 14, 0),
+    sentAt: new Date(2023, 4, 15, 9, 30),
     status: "delivered",
-    template: "Lembrete de Sessão Padrão",
   },
   {
     id: "2",
-    client: {
-      id: "2",
-      name: "João Oliveira",
-    },
-    session: {
-      id: "102",
-      date: new Date(2024, 4, 16),
-      time: "10:00",
-    },
+    clientName: "Maria Oliveira",
+    templateName: "Lembrete de Sessão Padrão",
     type: "session-reminder",
     channel: "sms",
-    sentAt: new Date(2024, 4, 15, 10, 0),
+    sentAt: new Date(2023, 4, 15, 10, 0),
     status: "delivered",
-    template: "Lembrete de Sessão Padrão",
   },
   {
     id: "3",
-    client: {
-      id: "3",
-      name: "Ana Silva",
-    },
-    session: {
-      id: "103",
-      date: new Date(2024, 4, 17),
-      time: "16:30",
-    },
-    type: "session-reminder",
+    clientName: "Pedro Santos",
+    templateName: "Lembrete de Sessão Perdida",
+    type: "missed-session",
     channel: "email",
-    sentAt: new Date(2024, 4, 16, 16, 30),
-    status: "delivered",
-    template: "Lembrete de Sessão Formal",
+    sentAt: new Date(2023, 4, 14, 15, 45),
+    status: "failed",
   },
   {
     id: "4",
-    client: {
-      id: "4",
-      name: "Carlos Mendes",
-    },
-    session: {
-      id: "104",
-      date: new Date(2024, 4, 10),
-      time: "13:00",
-    },
-    type: "missed-session",
+    clientName: "Ana Costa",
+    templateName: "Lembrete de Sessão Cancelada",
+    type: "cancelled-session",
     channel: "email",
-    sentAt: new Date(2024, 4, 10, 13, 15),
+    sentAt: new Date(2023, 4, 14, 11, 20),
     status: "delivered",
-    template: "Sessão Perdida",
   },
   {
     id: "5",
-    client: {
-      id: "5",
-      name: "Lúcia Ferreira",
-    },
-    session: {
-      id: "105",
-      date: new Date(2024, 4, 12),
-      time: "14:00",
-    },
-    type: "cancelled-session",
-    channel: "email",
-    sentAt: new Date(2024, 4, 11, 9, 30),
-    status: "delivered",
-    template: "Sessão Cancelada",
-  },
-  {
-    id: "6",
-    client: {
-      id: "1",
-      name: "Maria Santos",
-    },
-    session: {
-      id: "106",
-      date: new Date(2024, 4, 8),
-      time: "14:00",
-    },
+    clientName: "Carlos Ferreira",
+    templateName: "Lembrete de Sessão Padrão",
     type: "session-reminder",
     channel: "sms",
-    sentAt: new Date(2024, 4, 7, 14, 0),
-    status: "failed",
-    template: "Lembrete de Sessão Padrão",
+    sentAt: new Date(2023, 4, 13, 16, 10),
+    status: "pending",
   },
 ]
 
@@ -122,27 +65,17 @@ export function ReminderHistory() {
   const [typeFilter, setTypeFilter] = useState("all")
   const [channelFilter, setChannelFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
-  const [viewReminder, setViewReminder] = useState<any | null>(null)
-  const [isViewOpen, setIsViewOpen] = useState(false)
 
-  // Filtrar lembretes com base nos filtros aplicados
-  const filteredReminders = mockReminderHistory.filter((reminder) => {
+  const filteredHistory = mockHistory.filter((item) => {
     const matchesSearch =
-      reminder.client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      format(reminder.session.date, "dd/MM/yyyy").includes(searchTerm) ||
-      reminder.template.toLowerCase().includes(searchTerm.toLowerCase())
-
-    const matchesType = typeFilter === "all" || reminder.type === typeFilter
-    const matchesChannel = channelFilter === "all" || reminder.channel === channelFilter
-    const matchesStatus = statusFilter === "all" || reminder.status === statusFilter
+      item.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.templateName.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesType = typeFilter === "all" || item.type === typeFilter
+    const matchesChannel = channelFilter === "all" || item.channel === channelFilter
+    const matchesStatus = statusFilter === "all" || item.status === statusFilter
 
     return matchesSearch && matchesType && matchesChannel && matchesStatus
   })
-
-  const handleViewReminder = (reminder: any) => {
-    setViewReminder(reminder)
-    setIsViewOpen(true)
-  }
 
   const getTypeLabel = (type: string) => {
     switch (type) {
@@ -157,79 +90,96 @@ export function ReminderHistory() {
     }
   }
 
-  const getStatusVariant = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "delivered":
-        return "default"
-      case "failed":
-        return "destructive"
+        return <Badge className="bg-green-500">Entregue</Badge>
       case "pending":
-        return "outline"
+        return <Badge className="bg-yellow-500">Pendente</Badge>
+      case "failed":
+        return <Badge className="bg-red-500">Falhou</Badge>
       default:
-        return "default"
+        return <Badge>{status}</Badge>
     }
   }
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case "delivered":
-        return "Entregue"
-      case "failed":
-        return "Falhou"
-      case "pending":
-        return "Pendente"
+  const getChannelIcon = (channel: string) => {
+    switch (channel) {
+      case "email":
+        return <Mail className="h-4 w-4 mr-1" />
+      case "sms":
+        return <MessageSquare className="h-4 w-4 mr-1" />
       default:
-        return status
+        return null
     }
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
+          <Label htmlFor="search" className="sr-only">
+            Buscar
+          </Label>
           <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por cliente, data ou template..."
+              id="search"
+              placeholder="Buscar por cliente ou template..."
+              className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
             />
           </div>
         </div>
-        <div className="flex flex-1 gap-2">
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os tipos</SelectItem>
-              <SelectItem value="session-reminder">Lembrete de Sessão</SelectItem>
-              <SelectItem value="missed-session">Sessão Perdida</SelectItem>
-              <SelectItem value="cancelled-session">Sessão Cancelada</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={channelFilter} onValueChange={setChannelFilter}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Canal" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os canais</SelectItem>
-              <SelectItem value="email">Email</SelectItem>
-              <SelectItem value="sms">SMS</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos os status</SelectItem>
-              <SelectItem value="delivered">Entregue</SelectItem>
-              <SelectItem value="failed">Falhou</SelectItem>
-              <SelectItem value="pending">Pendente</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="grid grid-cols-3 gap-2">
+          <div>
+            <Label htmlFor="type-filter" className="sr-only">
+              Tipo
+            </Label>
+            <Select value={typeFilter} onValueChange={setTypeFilter}>
+              <SelectTrigger id="type-filter" className="w-full">
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os tipos</SelectItem>
+                <SelectItem value="session-reminder">Lembrete de Sessão</SelectItem>
+                <SelectItem value="missed-session">Sessão Perdida</SelectItem>
+                <SelectItem value="cancelled-session">Sessão Cancelada</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="channel-filter" className="sr-only">
+              Canal
+            </Label>
+            <Select value={channelFilter} onValueChange={setChannelFilter}>
+              <SelectTrigger id="channel-filter" className="w-full">
+                <SelectValue placeholder="Canal" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os canais</SelectItem>
+                <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="sms">SMS</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="status-filter" className="sr-only">
+              Status
+            </Label>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger id="status-filter" className="w-full">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos os status</SelectItem>
+                <SelectItem value="delivered">Entregue</SelectItem>
+                <SelectItem value="pending">Pendente</SelectItem>
+                <SelectItem value="failed">Falhou</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 
@@ -238,47 +188,51 @@ export function ReminderHistory() {
           <TableHeader>
             <TableRow>
               <TableHead>Cliente</TableHead>
-              <TableHead>Sessão</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Canal</TableHead>
-              <TableHead>Enviado em</TableHead>
+              <TableHead>Data de Envio</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead className="w-[100px]">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredReminders.length === 0 ? (
+            {filteredHistory.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-4 text-muted-foreground">
-                  Nenhum lembrete encontrado com os filtros aplicados.
+                <TableCell colSpan={6} className="text-center py-4">
+                  Nenhum lembrete encontrado.
                 </TableCell>
               </TableRow>
             ) : (
-              filteredReminders.map((reminder) => (
-                <TableRow key={reminder.id}>
-                  <TableCell>{reminder.client.name}</TableCell>
+              filteredHistory.map((item) => (
+                <TableRow key={item.id}>
                   <TableCell>
-                    {format(reminder.session.date, "dd/MM/yyyy", { locale: ptBR })} às {reminder.session.time}
-                  </TableCell>
-                  <TableCell>{getTypeLabel(reminder.type)}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center">
-                      {reminder.channel === "email" ? (
-                        <Mail className="mr-1 h-4 w-4" />
-                      ) : (
-                        <MessageSquare className="mr-1 h-4 w-4" />
-                      )}
-                      {reminder.channel === "email" ? "Email" : "SMS"}
+                    <div>
+                      <p className="font-medium">{item.clientName}</p>
+                      <p className="text-xs text-muted-foreground">{item.templateName}</p>
                     </div>
                   </TableCell>
-                  <TableCell>{format(reminder.sentAt, "dd/MM/yyyy HH:mm", { locale: ptBR })}</TableCell>
+                  <TableCell>{getTypeLabel(item.type)}</TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(reminder.status)}>{getStatusLabel(reminder.status)}</Badge>
+                    <div className="flex items-center">
+                      {getChannelIcon(item.channel)}
+                      <span className="capitalize">{item.channel}</span>
+                    </div>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => handleViewReminder(reminder)}>
-                      <Eye className="h-4 w-4" />
-                    </Button>
+                  <TableCell>{format(item.sentAt, "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}</TableCell>
+                  <TableCell>{getStatusBadge(item.status)}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="ghost" size="icon">
+                        <Eye className="h-4 w-4" />
+                        <span className="sr-only">Ver detalhes</span>
+                      </Button>
+                      {item.status === "failed" && (
+                        <Button variant="ghost" size="icon">
+                          <RefreshCw className="h-4 w-4" />
+                          <span className="sr-only">Reenviar</span>
+                        </Button>
+                      )}
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -286,25 +240,6 @@ export function ReminderHistory() {
           </TableBody>
         </Table>
       </div>
-
-      <div className="flex items-center justify-between">
-        <div className="text-sm text-muted-foreground">
-          Mostrando {filteredReminders.length} de {mockReminderHistory.length} lembretes
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" size="sm" disabled>
-            <ChevronLeft className="h-4 w-4" />
-            Anterior
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            Próximo
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
-
-      {/* Diálogo para visualizar detalhes do lembrete */}
-      {viewReminder && <ViewReminderDialog open={isViewOpen} onOpenChange={setIsViewOpen} reminder={viewReminder} />}
     </div>
   )
 }

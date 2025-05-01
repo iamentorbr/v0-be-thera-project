@@ -91,7 +91,7 @@ export function CreateReminderTemplateDialog({ open, onOpenChange }: CreateRemin
         <DialogHeader>
           <DialogTitle>Criar Novo Template</DialogTitle>
           <DialogDescription>
-            Crie um novo template para seus lembretes automáticos. Use variáveis como {{ cliente }} para personalizar
+            Crie um novo template para seus lembretes automáticos. Use variáveis como {"{{cliente}}"} para personalizar
             suas mensagens.
           </DialogDescription>
         </DialogHeader>
@@ -148,22 +148,22 @@ export function CreateReminderTemplateDialog({ open, onOpenChange }: CreateRemin
               />
               <div className="flex flex-wrap gap-2 mt-2">
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("cliente")}>
-                  {{ cliente }}
+                  {"{{cliente}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("terapeuta")}>
-                  {{ terapeuta }}
+                  {"{{terapeuta}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("data")}>
-                  {{ data }}
+                  {"{{data}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("hora")}>
-                  {{ hora }}
+                  {"{{hora}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("local")}>
-                  {{ local }}
+                  {"{{local}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("telefone")}>
-                  {{ telefone }}
+                  {"{{telefone}}"}
                 </Button>
               </div>
             </div>

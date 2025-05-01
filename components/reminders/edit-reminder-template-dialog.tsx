@@ -82,7 +82,7 @@ export function EditReminderTemplateDialog({ open, onOpenChange, template, onSav
         <DialogHeader>
           <DialogTitle>Editar Template</DialogTitle>
           <DialogDescription>
-            Edite seu template de lembrete. Use variáveis como {{ cliente }} para personalizar suas mensagens.
+            Edite seu template de lembrete. Use variáveis como {"{{cliente}}"} para personalizar suas mensagens.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
@@ -128,22 +128,22 @@ export function EditReminderTemplateDialog({ open, onOpenChange, template, onSav
               />
               <div className="flex flex-wrap gap-2 mt-2">
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("cliente")}>
-                  {{ cliente }}
+                  {"{{cliente}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("terapeuta")}>
-                  {{ terapeuta }}
+                  {"{{terapeuta}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("data")}>
-                  {{ data }}
+                  {"{{data}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("hora")}>
-                  {{ hora }}
+                  {"{{hora}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("local")}>
-                  {{ local }}
+                  {"{{local}}"}
                 </Button>
                 <Button type="button" variant="outline" size="sm" onClick={() => insertVariable("telefone")}>
-                  {{ telefone }}
+                  {"{{telefone}}"}
                 </Button>
               </div>
             </div>
