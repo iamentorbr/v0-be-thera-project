@@ -25,9 +25,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { toast } from "@/components/ui/use-toast"
-import { ArrowLeft, Save, Share2, Trash2, Edit, CheckCircle2 } from "lucide-react"
+import { ArrowLeft, Save, Share2, Trash2, Edit, CheckCircle2, Eye } from "lucide-react"
 import Link from "next/link"
 import { ShareExerciseDialog } from "@/components/exercises/share-exercise-dialog"
+import { ExercisePreview } from "@/components/exercises/exercise-preview"
 
 // Dados de exemplo para um exercício específico
 const exerciseData = {
@@ -97,6 +98,7 @@ export default function ExerciseDetailsPage({ params }: { params: { id: string }
   const [shareDialogOpen, setShareDialogOpen] = useState(false)
   const [exercise, setExercise] = useState(exerciseData)
   const [formData, setFormData] = useState(exerciseData)
+  const [activeTab, setActiveTab] = useState("details")
 
   // Função para lidar com mudanças nos campos do formulário
   const handleChange = (field: string, value: string) => {
@@ -151,6 +153,11 @@ export default function ExerciseDetailsPage({ params }: { params: { id: string }
     })
   }
 
+  // Função para alternar para a visualização prévia
+  const handlePreviewClick = () => {
+    setActiveTab("preview")
+  }
+
   return (
     <div className="container mx-auto py-6">
       <div className="flex items-center justify-between mb-6">
@@ -175,6 +182,10 @@ export default function ExerciseDetailsPage({ params }: { params: { id: string }
             </>
           ) : (
             <>
+              <Button variant="outline" onClick={handlePreviewClick}>
+                <Eye className="mr-2 h-4 w-4" />
+                Visualizar como Cliente
+              </Button>
               <Button variant="outline" onClick={() => setShareDialogOpen(true)}>
                 <Share2 className="mr-2 h-4 w-4" />
                 Compartilhar
@@ -208,11 +219,12 @@ export default function ExerciseDetailsPage({ params }: { params: { id: string }
         </div>
       </div>
 
-      <Tabs defaultValue="details" className="space-y-4">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
         <TabsList>
           <TabsTrigger value="details">Detalhes</TabsTrigger>
           <TabsTrigger value="content">Conteúdo</TabsTrigger>
           <TabsTrigger value="sharing">Compartilhamento</TabsTrigger>
+          <TabsTrigger value="preview">Visualização Prévia</TabsTrigger>
         </TabsList>
 
         <TabsContent value="details" className="space-y-4">
@@ -465,6 +477,28 @@ export default function ExerciseDetailsPage({ params }: { params: { id: string }
                   </div>
                 )}
               </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="preview" className="space-y-4">
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-medium">Visualização do Cliente</h3>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setIsEditing(true)}>
+                    <Edit className="mr-2 h-4 w-4" />
+                    Editar Exercício
+                  </Button>
+                  <Button onClick={() => setShareDialogOpen(true)}>
+                    <Share2 className="mr-2 h-4 w-4" />
+                    Compartilhar
+                  </Button>
+                </div>
+              </div>
+              <Separator className="mb-6" />
+              <ExercisePreview exercise={isEditing ? formData : exercise} />
             </CardContent>
           </Card>
         </TabsContent>
