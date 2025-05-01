@@ -13,6 +13,7 @@ import { toast } from "@/components/ui/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2, QrCode, RefreshCw, Save, Smartphone } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { WhatsAppMessagePreview } from "./whatsapp-message-preview"
 
 export function WhatsAppIntegration() {
   const [isLoading, setIsLoading] = useState(false)
@@ -292,6 +293,14 @@ export function WhatsAppIntegration() {
                       onChange={handleInputChange("cancellationMessage")}
                     />
                   </div>
+                </div>
+                <div className="mt-6 border-t pt-4">
+                  <h4 className="text-sm font-medium mb-2">Prévia da Mensagem</h4>
+                  <WhatsAppMessagePreview
+                    message={settings.welcomeMessage}
+                    businessName={settings.businessName || "BeTHERA"}
+                    includeButtons={settings.includeConfirmationButtons}
+                  />
                 </div>
               </TabsContent>
 
