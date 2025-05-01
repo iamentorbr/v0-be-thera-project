@@ -16,7 +16,7 @@ export default function ClientsPage() {
           <div className="flex items-center space-x-2">
             <Button>
               <UserPlus className="mr-2 h-4 w-4" />
-              Add Client
+              Adicionar Cliente
             </Button>
           </div>
         </div>
@@ -24,16 +24,16 @@ export default function ClientsPage() {
         <div className="flex items-center space-x-2">
           <div className="relative flex-1 max-w-sm">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input type="search" placeholder="Search clients..." className="pl-8" />
+            <Input type="search" placeholder="Buscar clientes..." className="pl-8" />
           </div>
         </div>
 
         <Tabs defaultValue="all" className="space-y-4">
           <TabsList>
-            <TabsTrigger value="all">All Clients</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="new">New</TabsTrigger>
-            <TabsTrigger value="inactive">Inactive</TabsTrigger>
+            <TabsTrigger value="all">Todos os Clientes</TabsTrigger>
+            <TabsTrigger value="active">Ativos</TabsTrigger>
+            <TabsTrigger value="new">Novos</TabsTrigger>
+            <TabsTrigger value="inactive">Inativos</TabsTrigger>
           </TabsList>
           <TabsContent value="all" className="space-y-4">
             <Card>
@@ -41,12 +41,12 @@ export default function ClientsPage() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Client</TableHead>
+                      <TableHead>Cliente</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead>Last Session</TableHead>
-                      <TableHead>Next Session</TableHead>
-                      <TableHead>Payment</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
+                      <TableHead>Última Sessão</TableHead>
+                      <TableHead>Próxima Sessão</TableHead>
+                      <TableHead>Pagamento</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -54,49 +54,49 @@ export default function ClientsPage() {
                       {
                         name: "John Smith",
                         email: "john@example.com",
-                        status: "Active",
+                        status: "Ativo",
                         lastSession: "Apr 5, 2024",
                         nextSession: "Apr 12, 2024",
-                        payment: "Paid",
+                        payment: "Pago",
                       },
                       {
                         name: "Sarah Johnson",
                         email: "sarah@example.com",
-                        status: "Active",
+                        status: "Ativo",
                         lastSession: "Apr 3, 2024",
                         nextSession: "Apr 17, 2024",
-                        payment: "Paid",
+                        payment: "Pago",
                       },
                       {
                         name: "Michael Brown",
                         email: "michael@example.com",
-                        status: "New",
-                        lastSession: "Never",
+                        status: "Novo",
+                        lastSession: "Nunca",
                         nextSession: "Apr 15, 2024",
-                        payment: "Pending",
+                        payment: "Pendente",
                       },
                       {
                         name: "Emily Davis",
                         email: "emily@example.com",
-                        status: "Inactive",
+                        status: "Inativo",
                         lastSession: "Mar 10, 2024",
-                        nextSession: "None",
-                        payment: "N/A",
+                        nextSession: "Nenhuma",
+                        payment: "N/D",
                       },
                       {
                         name: "David Wilson",
                         email: "david@example.com",
-                        status: "Active",
+                        status: "Ativo",
                         lastSession: "Apr 8, 2024",
                         nextSession: "Apr 22, 2024",
-                        payment: "Paid",
+                        payment: "Pago",
                       },
                     ].map((client, i) => (
                       <TableRow key={i}>
                         <TableCell>
                           <div className="flex items-center gap-3">
                             <Avatar>
-                              <AvatarImage src={`/placeholder.svg?height=40&width=40`} alt={client.name} />
+                              <AvatarImage src={`/generic-placeholder-graphic.png?height=40&width=40`} alt={client.name} />
                               <AvatarFallback>
                                 {client.name
                                   .split(" ")
@@ -113,7 +113,7 @@ export default function ClientsPage() {
                         <TableCell>
                           <Badge
                             variant={
-                              client.status === "Active" ? "default" : client.status === "New" ? "outline" : "secondary"
+                              client.status === "Ativo" ? "default" : client.status === "Novo" ? "outline" : "secondary"
                             }
                           >
                             {client.status}
@@ -124,9 +124,9 @@ export default function ClientsPage() {
                         <TableCell>
                           <Badge
                             variant={
-                              client.payment === "Paid"
+                              client.payment === "Pago"
                                 ? "default"
-                                : client.payment === "Pending"
+                                : client.payment === "Pendente"
                                   ? "outline"
                                   : "secondary"
                             }
@@ -138,15 +138,15 @@ export default function ClientsPage() {
                           <div className="flex justify-end gap-2">
                             <Button variant="outline" size="icon">
                               <Calendar className="h-4 w-4" />
-                              <span className="sr-only">Schedule</span>
+                              <span className="sr-only">Agendar</span>
                             </Button>
                             <Button variant="outline" size="icon">
                               <FileText className="h-4 w-4" />
-                              <span className="sr-only">Notes</span>
+                              <span className="sr-only">Notas</span>
                             </Button>
                             <Button variant="outline" size="icon">
                               <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">More</span>
+                              <span className="sr-only">Mais</span>
                             </Button>
                           </div>
                         </TableCell>
@@ -160,33 +160,33 @@ export default function ClientsPage() {
           <TabsContent value="active" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Active Clients</CardTitle>
-                <CardDescription>Manage your active client relationships</CardDescription>
+                <CardTitle>Clientes Ativos</CardTitle>
+                <CardDescription>Gerencie seus relacionamentos com clientes ativos</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Active clients content would appear here</p>
+                <p>Conteúdo de clientes ativos apareceria aqui</p>
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="new" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>New Clients</CardTitle>
-                <CardDescription>Onboard and manage your new clients</CardDescription>
+                <CardTitle>Novos Clientes</CardTitle>
+                <CardDescription>Integre e gerencie seus novos clientes</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>New clients content would appear here</p>
+                <p>Conteúdo de novos clientes apareceria aqui</p>
               </CardContent>
             </Card>
           </TabsContent>
           <TabsContent value="inactive" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>Inactive Clients</CardTitle>
-                <CardDescription>Review and potentially re-engage inactive clients</CardDescription>
+                <CardTitle>Clientes Inativos</CardTitle>
+                <CardDescription>Revise e potencialmente reengage clientes inativos</CardDescription>
               </CardHeader>
               <CardContent>
-                <p>Inactive clients content would appear here</p>
+                <p>Conteúdo de clientes inativos apareceria aqui</p>
               </CardContent>
             </Card>
           </TabsContent>
