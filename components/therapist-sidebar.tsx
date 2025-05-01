@@ -83,7 +83,7 @@ export function TherapistSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/therapist/notes"}>
+            <SidebarMenuButton asChild isActive={pathname.startsWith("/therapist/notes")}>
               <Link href="/therapist/notes">
                 <FileText className="mr-2 h-4 w-4" />
                 <span>Anotações</span>
