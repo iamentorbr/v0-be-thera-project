@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
 import { toast } from "@/components/ui/use-toast"
 
 interface CreateReminderTemplateDialogProps {
@@ -28,6 +29,7 @@ export function CreateReminderTemplateDialog({ open, onOpenChange }: CreateRemin
   const [subject, setSubject] = useState("")
   const [body, setBody] = useState("")
   const [channels, setChannels] = useState<string[]>(["email"])
+  const [includeConfirmation, setIncludeConfirmation] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async () => {
@@ -71,6 +73,7 @@ export function CreateReminderTemplateDialog({ open, onOpenChange }: CreateRemin
     setSubject("")
     setBody("")
     setChannels(["email"])
+    setIncludeConfirmation(false)
   }
 
   const handleChannelChange = (channel: string, checked: boolean) => {
@@ -83,6 +86,10 @@ export function CreateReminderTemplateDialog({ open, onOpenChange }: CreateRemin
 
   const insertVariable = (variable: string) => {
     setBody((prev) => prev + `{{${variable}}}`)
+  }
+
+  const insertConfirmationLink = () => {
+    setBody((prev) => prev + "\n\nPara confirmar sua presença, clique no link abaixo:\n{{link_confirmacao}}")
   }
 
   return (
@@ -167,6 +174,29 @@ export function CreateReminderTemplateDialog({ open, onOpenChange }: CreateRemin
                 </Button>
               </div>
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="include-confirmation" className="cursor-pointer">
+                Incluir link de confirmação
+              </Label>
+              <Switch
+                id="include-confirmation"
+                checked={includeConfirmation}
+                onCheckedChange={(checked) => {
+                  setIncludeConfirmation(checked)
+                  if (checked && !body.includes("{{link_confirmacao}}")) {
+                    insertConfirmationLink()
+                  }
+                }}
+              />
+            </div>
+            {includeConfirmation && (
+              <p className="text-sm text-muted-foreground">
+                Um link único será gerado para cada cliente confirmar sua presença diretamente pelo lembrete.
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">

@@ -3,9 +3,6 @@
 import { useState } from "react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Video, MapPin, Clock, Calendar, Edit, X, Check } from "lucide-react"
-
-import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -14,19 +11,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import { Calendar, Clock, MapPin, User, FileText, Send } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { toast } from "@/components/ui/use-toast"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { SessionConfirmationStatus } from "@/components/scheduling/session-confirmation-status"
+import { SendReminderDialog } from "@/components/reminders/send-reminder-dialog"
 
 interface ViewSessionDialogProps {
   open: boolean
@@ -35,90 +24,16 @@ interface ViewSessionDialogProps {
 }
 
 export function ViewSessionDialog({ open, onOpenChange, session }: ViewSessionDialogProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [confirmCancelOpen, setConfirmCancelOpen] = useState(false)
+  const [sendReminderOpen, setSendReminderOpen] = useState(false)
 
-  // Função para obter o texto do status em português
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "Confirmada"
-      case "pending":
-        return "Pendente"
-      case "completed":
-        return "Concluída"
-      case "cancelled":
-        return "Cancelada"
-      default:
-        return status
-    }
+  if (!session) return null
+
+  const formatSessionDate = (date: Date) => {
+    return format(date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })
   }
 
-  // Função para obter a variante do badge baseado no status
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case "confirmed":
-        return "default"
-      case "pending":
-        return "outline"
-      case "completed":
-        return "secondary"
-      case "cancelled":
-        return "destructive"
-      default:
-        return "default"
-    }
-  }
-
-  const handleConfirmSession = async () => {
-    setIsSubmitting(true)
-
-    try {
-      // Aqui seria a chamada para a API para confirmar a sessão
-      // Por enquanto, vamos apenas simular um atraso
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      toast({
-        title: "Sessão confirmada!",
-        description: `A sessão com ${session.client.name} foi confirmada.`,
-      })
-
-      onOpenChange(false)
-    } catch (error) {
-      toast({
-        title: "Erro ao confirmar",
-        description: "Ocorreu um erro ao confirmar a sessão. Tente novamente.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
-  }
-
-  const handleCancelSession = async () => {
-    setIsSubmitting(true)
-
-    try {
-      // Aqui seria a chamada para a API para cancelar a sessão
-      // Por enquanto, vamos apenas simular um atraso
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-      toast({
-        title: "Sessão cancelada",
-        description: `A sessão com ${session.client.name} foi cancelada.`,
-      })
-
-      setConfirmCancelOpen(false)
-      onOpenChange(false)
-    } catch (error) {
-      toast({
-        title: "Erro ao cancelar",
-        description: "Ocorreu um erro ao cancelar a sessão. Tente novamente.",
-        variant: "destructive",
-      })
-    } finally {
-      setIsSubmitting(false)
-    }
+  const formatSessionTime = (date: Date) => {
+    return format(date, "HH:mm", { locale: ptBR })
   }
 
   return (
@@ -127,108 +42,69 @@ export function ViewSessionDialog({ open, onOpenChange, session }: ViewSessionDi
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>Detalhes da Sessão</DialogTitle>
-            <DialogDescription>Informações sobre a sessão agendada.</DialogDescription>
+            <DialogDescription>Informações completas sobre a sessão agendada.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="flex items-center space-x-4">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={session.client.avatar || "/placeholder.svg"} alt={session.client.name} />
-                <AvatarFallback>
-                  {session.client.name
-                    .split(" ")
-                    .map((n: string) => n[0])
-                    .join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h3 className="font-medium">{session.client.name}</h3>
-                <Badge variant={getStatusVariant(session.status)} className="mt-1">
-                  {getStatusText(session.status)}
-                </Badge>
-              </div>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <Badge variant={session.status === "scheduled" ? "default" : "secondary"}>
+                {session.status === "scheduled" ? "Agendada" : "Concluída"}
+              </Badge>
+              <SessionConfirmationStatus status={session.confirmationStatus || "no_response"} />
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center text-sm">
-                <Calendar className="mr-2 h-4 w-4 text-muted-foreground" />
-                <span>{format(session.date, "EEEE, dd 'de' MMMM 'de' yyyy", { locale: ptBR })}</span>
+            <div className="space-y-3">
+              <div className="flex items-start">
+                <User className="h-5 w-5 mr-2 text-muted-foreground" />
+                <div>
+                  <p className="font-medium">{session.clientName}</p>
+                  <p className="text-sm text-muted-foreground">{session.clientEmail}</p>
+                </div>
               </div>
-              <div className="flex items-center text-sm">
-                <Clock className="mr-2 h-4 w-4 text-muted-foreground" />
+
+              <div className="flex items-center">
+                <Calendar className="h-5 w-5 mr-2 text-muted-foreground" />
+                <span>{formatSessionDate(new Date(session.date))}</span>
+              </div>
+
+              <div className="flex items-center">
+                <Clock className="h-5 w-5 mr-2 text-muted-foreground" />
                 <span>
-                  {session.startTime} - {session.endTime}
+                  {formatSessionTime(new Date(session.date))} - {session.duration} minutos
                 </span>
               </div>
-              <div className="flex items-center text-sm">
-                {session.type === "video" ? (
-                  <>
-                    <Video className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>Videochamada</span>
-                  </>
-                ) : (
-                  <>
-                    <MapPin className="mr-2 h-4 w-4 text-muted-foreground" />
-                    <span>Presencial</span>
-                  </>
-                )}
-              </div>
-            </div>
 
-            {session.notes && (
-              <div className="space-y-2">
-                <h4 className="text-sm font-medium">Observações:</h4>
-                <p className="text-sm text-muted-foreground">{session.notes}</p>
+              <div className="flex items-start">
+                <MapPin className="h-5 w-5 mr-2 text-muted-foreground" />
+                <span>{session.location}</span>
               </div>
-            )}
+
+              {session.notes && (
+                <div className="flex items-start">
+                  <FileText className="h-5 w-5 mr-2 text-muted-foreground" />
+                  <div>
+                    <p className="font-medium">Observações:</p>
+                    <p className="text-sm">{session.notes}</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-          <DialogFooter className="flex flex-col sm:flex-row gap-2">
-            {session.status === "pending" && (
-              <Button
-                variant="default"
-                className="w-full sm:w-auto"
-                onClick={handleConfirmSession}
-                disabled={isSubmitting}
-              >
-                <Check className="mr-2 h-4 w-4" />
-                Confirmar
-              </Button>
-            )}
-            <Button variant="outline" className="w-full sm:w-auto" onClick={() => onOpenChange(false)}>
+          <DialogFooter className="flex justify-between sm:justify-between">
+            <Button variant="outline" onClick={() => onOpenChange(false)}>
               Fechar
             </Button>
-            <Button variant="outline" className="w-full sm:w-auto">
-              <Edit className="mr-2 h-4 w-4" />
-              Editar
-            </Button>
-            {session.status !== "cancelled" && session.status !== "completed" && (
-              <Button variant="destructive" className="w-full sm:w-auto" onClick={() => setConfirmCancelOpen(true)}>
-                <X className="mr-2 h-4 w-4" />
-                Cancelar Sessão
+            <div className="flex space-x-2">
+              <Button variant="outline" onClick={() => setSendReminderOpen(true)} className="flex items-center">
+                <Send className="h-4 w-4 mr-2" />
+                Enviar Lembrete
               </Button>
-            )}
+              <Button>Editar Sessão</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      <AlertDialog open={confirmCancelOpen} onOpenChange={setConfirmCancelOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cancelar Sessão</AlertDialogTitle>
-            <AlertDialogDescription>
-              Tem certeza que deseja cancelar esta sessão? Esta ação não pode ser desfeita.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Voltar</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleCancelSession}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              Sim, cancelar sessão
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <SendReminderDialog open={sendReminderOpen} onOpenChange={setSendReminderOpen} session={session} />
     </>
   )
 }
