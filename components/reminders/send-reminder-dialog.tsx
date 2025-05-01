@@ -15,8 +15,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "@/components/ui/use-toast"
-import { Loader2, AlertCircle } from "lucide-react"
+import { Loader2, AlertCircle, MessageSquare, Mail, Phone } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { WhatsAppPreview } from "./whatsapp-preview"
 
 interface SendReminderDialogProps {
   open: boolean
@@ -32,7 +34,7 @@ const mockTemplates = [
     type: "session-reminder",
     subject: "Lembrete: Sua sessão está agendada para amanhã",
     body: "Olá {{cliente}},\n\nEste é um lembrete de que você tem uma sessão agendada com {{terapeuta}} amanhã, {{data}} às {{hora}}.\n\nLocal: {{local}}\n\nPor favor, confirme sua presença ou entre em contato caso precise reagendar.\n\nPara confirmar sua presença, clique no link abaixo:\n{{link_confirmacao}}\n\nAtenciosamente,\n{{terapeuta}}",
-    channels: ["email", "sms"],
+    channels: ["email", "sms", "whatsapp"],
     isDefault: true,
   },
   {
@@ -42,6 +44,15 @@ const mockTemplates = [
     subject: "Confirmação de Agendamento",
     body: "Prezado(a) {{cliente}},\n\nGostaríamos de confirmar seu agendamento para {{data}} às {{hora}} com {{terapeuta}}.\n\nLocal: {{local}}\n\nPara confirmar sua presença, clique no link abaixo:\n{{link_confirmacao}}\n\nAtenciosamente,\n{{terapeuta}}",
     channels: ["email"],
+    isDefault: false,
+  },
+  {
+    id: "3",
+    name: "Lembrete WhatsApp",
+    type: "session-reminder",
+    subject: "",
+    body: "Olá {{cliente}}! 👋\n\nEste é um lembrete da sua sessão com {{terapeuta}} amanhã ({{data}}) às {{hora}}.\n\nLocal: {{local}}\n\nPor favor, confirme sua presença usando os botões abaixo.",
+    channels: ["whatsapp"],
     isDefault: false,
   },
 ]
@@ -54,12 +65,29 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [clientPreferences, setClientPreferences] = useState<any>(null)
   const [isLoadingPreferences, setIsLoadingPreferences] = useState(false)
+  const [activeTab, setActiveTab] = useState("email")
 
   useEffect(() => {
     if (open && session?.clientId) {
       fetchClientPreferences(session.clientId)
     }
   }, [open, session])
+
+  useEffect(() => {
+    // Quando o template muda, ajuste a visualização da aba para o canal principal do template
+    if (selectedTemplate) {
+      const template = mockTemplates.find((t) => t.id === selectedTemplate)
+      if (template) {
+        if (template.channels.includes("whatsapp")) {
+          setActiveTab("whatsapp")
+        } else if (template.channels.includes("email")) {
+          setActiveTab("email")
+        } else if (template.channels.includes("sms")) {
+          setActiveTab("sms")
+        }
+      }
+    }
+  }, [selectedTemplate])
 
   const fetchClientPreferences = async (clientId: string) => {
     setIsLoadingPreferences(true)
@@ -71,10 +99,10 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
       // Dados simulados de preferências do cliente
       const preferences = {
         enabled: true,
-        preferredChannel: "email",
+        preferredChannel: "whatsapp", // Atualizado para WhatsApp
         reminderTimes: ["24h", "1h"],
         sessionReminders: true,
-        preferredTemplate: "2", // ID do template preferido
+        preferredTemplate: "3", // ID do template de WhatsApp
       }
 
       setClientPreferences(preferences)
@@ -165,6 +193,10 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
     return preview
   }
 
+  const getSelectedTemplate = () => {
+    return mockTemplates.find((t) => t.id === selectedTemplate)
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
@@ -215,7 +247,7 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <Label htmlFor="include-confirmation" className="cursor-pointer">
-                    Incluir link de confirmação
+                    Incluir link/botões de confirmação
                   </Label>
                   <Checkbox
                     id="include-confirmation"
@@ -225,7 +257,8 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
                 </div>
                 {includeConfirmation && (
                   <p className="text-sm text-muted-foreground">
-                    Um link único será gerado para o cliente confirmar sua presença diretamente pelo lembrete.
+                    Um link único ou botões serão gerados para o cliente confirmar sua presença diretamente pelo
+                    lembrete.
                   </p>
                 )}
               </div>
@@ -279,9 +312,43 @@ export function SendReminderDialog({ open, onOpenChange, session }: SendReminder
 
               <div className="space-y-2">
                 <Label>Prévia</Label>
-                <div className="border rounded-md p-4 bg-muted/30 whitespace-pre-line text-sm">
-                  {getTemplatePreview()}
-                </div>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid grid-cols-3">
+                    <TabsTrigger value="email" disabled={!channels.includes("email")}>
+                      <Mail className="h-4 w-4 mr-2" />
+                      Email
+                    </TabsTrigger>
+                    <TabsTrigger value="sms" disabled={!channels.includes("sms")}>
+                      <Phone className="h-4 w-4 mr-2" />
+                      SMS
+                    </TabsTrigger>
+                    <TabsTrigger value="whatsapp" disabled={!channels.includes("whatsapp")}>
+                      <MessageSquare className="h-4 w-4 mr-2" />
+                      WhatsApp
+                    </TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="email" className="border rounded-md p-4 bg-muted/30 whitespace-pre-line text-sm">
+                    <p className="font-semibold mb-2">Assunto: {getSelectedTemplate()?.subject}</p>
+                    {getTemplatePreview()}
+                  </TabsContent>
+
+                  <TabsContent value="sms" className="border rounded-md p-4 bg-muted/30 whitespace-pre-line text-sm">
+                    {getTemplatePreview()}
+                  </TabsContent>
+
+                  <TabsContent value="whatsapp">
+                    <WhatsAppPreview
+                      clientName={session?.clientName || "Cliente"}
+                      therapistName="Dr. Paulo Ribeiro"
+                      date="10/05/2025"
+                      time="14:30"
+                      location={session?.location || "Consultório"}
+                      message={getTemplatePreview()}
+                      includeButtons={includeConfirmation}
+                    />
+                  </TabsContent>
+                </Tabs>
               </div>
             </>
           )}
