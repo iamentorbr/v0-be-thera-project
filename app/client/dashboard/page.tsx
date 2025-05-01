@@ -9,13 +9,13 @@ export default function ClientDashboard() {
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <div>
-            <h2 className="text-3xl font-bold tracking-tight">✨ Welcome, John</h2>
-            <p className="text-muted-foreground">Your journey to wellness continues today</p>
+            <h2 className="text-3xl font-bold tracking-tight">✨ Bem-vindo, John</h2>
+            <p className="text-muted-foreground">Sua jornada de bem-estar continua hoje</p>
           </div>
           <div className="flex items-center space-x-2">
             <Button>
               <Calendar className="mr-2 h-4 w-4" />
-              Book Session
+              Agendar Sessão
             </Button>
           </div>
         </div>
@@ -23,53 +23,53 @@ export default function ClientDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Next Session</CardTitle>
+              <CardTitle className="text-sm font-medium">Próxima Sessão</CardTitle>
               <Calendar className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">Apr 12</div>
               <p className="text-xs text-muted-foreground">2:00 PM with Jane Doe</p>
               <Button variant="link" className="px-0 mt-2">
-                View details
+                Ver detalhes
               </Button>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Content</CardTitle>
+              <CardTitle className="text-sm font-medium">Novo Conteúdo</CardTitle>
               <FileAudio className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">3 Items</div>
-              <p className="text-xs text-muted-foreground">Meditation audio and resources</p>
+              <p className="text-xs text-muted-foreground">Áudio de meditação e recursos</p>
               <Button variant="link" className="px-0 mt-2">
-                Explore
+                Explorar
               </Button>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Pending Exercises</CardTitle>
+              <CardTitle className="text-sm font-medium">Exercícios Pendentes</CardTitle>
               <BookOpen className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">2</div>
-              <p className="text-xs text-muted-foreground">Due by April 15</p>
+              <p className="text-xs text-muted-foreground">Prazo até 15 de abril</p>
               <Button variant="link" className="px-0 mt-2">
-                Complete now
+                Completar agora
               </Button>
             </CardContent>
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Journal Entries</CardTitle>
+              <CardTitle className="text-sm font-medium">Entradas do Diário</CardTitle>
               <MessageSquare className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">7</div>
-              <p className="text-xs text-muted-foreground">This month</p>
+              <p className="text-xs text-muted-foreground">Este mês</p>
               <Button variant="link" className="px-0 mt-2">
-                Write new entry
+                Escrever nova entrada
               </Button>
             </CardContent>
           </Card>
@@ -78,14 +78,14 @@ export default function ClientDashboard() {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
             <CardHeader>
-              <CardTitle>Your Wellness Journey</CardTitle>
-              <CardDescription>Track your progress and upcoming milestones</CardDescription>
+              <CardTitle>Sua Jornada de Bem-estar</CardTitle>
+              <CardDescription>Acompanhe seu progresso e próximos marcos</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <div className="font-medium">Meditation Practice</div>
+                    <div className="font-medium">Prática de Meditação</div>
                     <div>7/10 days</div>
                   </div>
                   <div className="h-2 w-full rounded-full bg-muted">
@@ -94,7 +94,7 @@ export default function ClientDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <div className="font-medium">Journaling</div>
+                    <div className="font-medium">Diário</div>
                     <div>5/8 entries</div>
                   </div>
                   <div className="h-2 w-full rounded-full bg-muted">
@@ -103,7 +103,7 @@ export default function ClientDashboard() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <div className="font-medium">Exercise Completion</div>
+                    <div className="font-medium">Conclusão de Exercícios</div>
                     <div>3/5 exercises</div>
                   </div>
                   <div className="h-2 w-full rounded-full bg-muted">
@@ -115,8 +115,8 @@ export default function ClientDashboard() {
           </Card>
           <Card className="col-span-3">
             <CardHeader>
-              <CardTitle>Daily Inspiration</CardTitle>
-              <CardDescription>A thought for your reflection</CardDescription>
+              <CardTitle>Inspiração Diária</CardTitle>
+              <CardDescription>Um pensamento para sua reflexão</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col items-center text-center space-y-4 py-6">
@@ -125,10 +125,10 @@ export default function ClientDashboard() {
                   "The journey of a thousand miles begins with a single step."
                 </blockquote>
                 <p className="text-sm text-muted-foreground">
-                  Take a moment today to reflect on how far you've come on your journey.
+                  Tire um momento hoje para refletir sobre o quanto você já avançou em sua jornada.
                 </p>
                 <Button variant="outline" className="mt-4">
-                  Add to Journal
+                  Adicionar ao Diário
                 </Button>
               </div>
             </CardContent>
@@ -137,19 +137,19 @@ export default function ClientDashboard() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Recent Content</CardTitle>
-            <CardDescription>Resources shared by your therapist</CardDescription>
+            <CardTitle>Conteúdo Recente</CardTitle>
+            <CardDescription>Recursos compartilhados pelo seu terapeuta</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {[
-                { title: "Morning Meditation", type: "Audio", date: "Apr 8" },
-                { title: "Mindfulness Exercise", type: "PDF", date: "Apr 5" },
-                { title: "Reflection Questions", type: "Text", date: "Apr 3" },
+                { title: "Meditação Matinal", type: "Áudio", date: "8 Abr" },
+                { title: "Exercício de Atenção Plena", type: "PDF", date: "5 Abr" },
+                { title: "Perguntas de Reflexão", type: "Texto", date: "3 Abr" },
               ].map((item, i) => (
                 <Card key={i} className="overflow-hidden">
                   <div className="h-32 bg-gradient-to-br from-purple-500/20 to-indigo-500/20 flex items-center justify-center">
-                    {item.type === "Audio" ? (
+                    {item.type === "Áudio" ? (
                       <FileAudio className="h-10 w-10 text-primary" />
                     ) : item.type === "PDF" ? (
                       <BookOpen className="h-10 w-10 text-primary" />
@@ -162,7 +162,7 @@ export default function ClientDashboard() {
                     <div className="flex items-center justify-between mt-2">
                       <p className="text-xs text-muted-foreground">{item.date}</p>
                       <Button variant="ghost" size="sm">
-                        View
+                        Visualizar
                       </Button>
                     </div>
                   </CardContent>
