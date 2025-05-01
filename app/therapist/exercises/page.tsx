@@ -82,7 +82,9 @@ function ExerciseCard({ exercise, onShare }: { exercise: Exercise; onShare: (exe
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-lg">{exercise.title}</CardTitle>
+            <Link href={`/therapist/exercises/${exercise.id}`} className="hover:underline">
+              <CardTitle className="text-lg">{exercise.title}</CardTitle>
+            </Link>
             <CardDescription className="mt-1">{exercise.description}</CardDescription>
           </div>
           <DropdownMenu>
@@ -97,9 +99,11 @@ function ExerciseCard({ exercise, onShare }: { exercise: Exercise; onShare: (exe
                 <Share2 className="mr-2 h-4 w-4" />
                 <span>Compartilhar</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Edit className="mr-2 h-4 w-4" />
-                <span>Editar</span>
+              <DropdownMenuItem asChild>
+                <Link href={`/therapist/exercises/${exercise.id}`}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  <span>Editar</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="text-destructive">
                 <Trash2 className="mr-2 h-4 w-4" />
