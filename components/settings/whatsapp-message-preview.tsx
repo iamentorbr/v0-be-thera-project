@@ -1,51 +1,93 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Check, CheckCheck } from "lucide-react"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Button } from "@/components/ui/button"
 
 interface WhatsAppMessagePreviewProps {
-  message: string
-  businessName?: string
-  includeButtons?: boolean
-  timestamp?: string
-  status?: "sent" | "delivered" | "read"
+  defaultMessage?: string
 }
 
 export function WhatsAppMessagePreview({
-  message,
-  businessName = "BeTHERA",
-  includeButtons = true,
-  timestamp = "14:25",
-  status = "delivered",
+  defaultMessage = "Olá {{nome}}, gostaria de confirmar sua sessão para {{data}} às {{hora}}. Por favor, responda SIM para confirmar ou NÃO para reagendar.",
 }: WhatsAppMessagePreviewProps) {
-  return (
-    <div className="max-w-sm mx-auto">
-      <div className="bg-[#128C7E] text-white p-2 rounded-t-lg flex items-center gap-2">
-        <Avatar className="h-6 w-6">
-          <AvatarImage src="/letter-b-abstract.png" alt={businessName} />
-          <AvatarFallback>B</AvatarFallback>
-        </Avatar>
-        <span className="text-sm font-medium">{businessName}</span>
-      </div>
-      <Card className="rounded-t-none border-t-0">
-        <CardContent className="p-3 space-y-3">
-          <div className="bg-[#E7FFDB] p-2 rounded-lg max-w-[80%] ml-auto relative">
-            <p className="text-sm">{message}</p>
-            <div className="absolute bottom-1 right-2 flex items-center text-[10px] text-gray-500 gap-1">
-              <span>{timestamp}</span>
-              {status === "sent" && <Check className="h-3 w-3" />}
-              {status === "delivered" && <CheckCheck className="h-3 w-3" />}
-              {status === "read" && <CheckCheck className="h-3 w-3 text-blue-500" />}
-            </div>
-          </div>
+  const [message, setMessage] = useState(defaultMessage)
+  const [previewName, setPreviewName] = useState("Maria")
+  const [previewDate, setPreviewDate] = useState("15/05/2023")
+  const [previewTime, setPreviewTime] = useState("14:30")
 
-          {includeButtons && (
-            <div className="flex gap-2">
-              <button className="bg-[#128C7E] text-white text-xs py-1 px-3 rounded-full flex-1">Confirmar</button>
-              <button className="bg-gray-200 text-gray-800 text-xs py-1 px-3 rounded-full flex-1">Recusar</button>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+  const previewMessage = message
+    .replace("{{nome}}", previewName)
+    .replace("{{data}}", previewDate)
+    .replace("{{hora}}", previewTime)
+
+  return (
+    <div className="space-y-6">
+      <div className="space-y-4">
+        <Label htmlFor="message-template">Modelo de Mensagem</Label>
+        <Textarea
+          id="message-template"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Digite o modelo de mensagem..."
+          className="min-h-[100px]"
+        />
+        <div className="text-sm text-muted-foreground">
+          Use <code className="bg-muted p-1 rounded">{"{{nome}}"}</code>,{" "}
+          <code className="bg-muted p-1 rounded">{"{{data}}"}</code> e{" "}
+          <code className="bg-muted p-1 rounded">{"{{hora}}"}</code> como variáveis.
+        </div>
+      </div>
+
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <Label htmlFor="preview-name">Nome</Label>
+          <Textarea
+            id="preview-name"
+            value={previewName}
+            onChange={(e) => setPreviewName(e.target.value)}
+            className="h-10"
+          />
+        </div>
+        <div>
+          <Label htmlFor="preview-date">Data</Label>
+          <Textarea
+            id="preview-date"
+            value={previewDate}
+            onChange={(e) => setPreviewDate(e.target.value)}
+            className="h-10"
+          />
+        </div>
+        <div>
+          <Label htmlFor="preview-time">Hora</Label>
+          <Textarea
+            id="preview-time"
+            value={previewTime}
+            onChange={(e) => setPreviewTime(e.target.value)}
+            className="h-10"
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Visualização da Mensagem</Label>
+        <div className="flex justify-center">
+          <div className="w-full max-w-md">
+            <Card className="bg-[#DCF8C6] border-0">
+              <CardContent className="p-4">
+                <div className="text-sm">{previewMessage}</div>
+                <div className="text-xs text-right text-muted-foreground mt-1">14:45</div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <Button>Salvar Modelo</Button>
+      </div>
     </div>
   )
 }

@@ -1,50 +1,77 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname } from "next/navigation"
+import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { User, Settings, CreditCard, Bell, Lock, Calendar, Palette, Link2 } from "lucide-react"
+import {
+  Settings,
+  User,
+  CreditCard,
+  Bell,
+  Calendar,
+  Shield,
+  Palette,
+  MessageSquare,
+  FileText,
+  Clock,
+  LinkIcon,
+} from "lucide-react"
 
-const items = [
+const settingsLinks = [
   {
     title: "Perfil",
     href: "/therapist/settings",
-    icon: <User className="h-4 w-4" />,
+    icon: User,
   },
   {
     title: "Conta",
     href: "/therapist/settings/account",
-    icon: <Settings className="h-4 w-4" />,
+    icon: Settings,
   },
   {
     title: "Pagamentos",
     href: "/therapist/settings/payments",
-    icon: <CreditCard className="h-4 w-4" />,
+    icon: CreditCard,
   },
   {
     title: "Notificações",
     href: "/therapist/settings/notifications",
-    icon: <Bell className="h-4 w-4" />,
-  },
-  {
-    title: "Privacidade",
-    href: "/therapist/settings/privacy",
-    icon: <Lock className="h-4 w-4" />,
+    icon: Bell,
   },
   {
     title: "Agendamento",
     href: "/therapist/settings/scheduling",
-    icon: <Calendar className="h-4 w-4" />,
+    icon: Calendar,
   },
   {
-    title: "Personalização",
+    title: "Privacidade",
+    href: "/therapist/settings/privacy",
+    icon: Shield,
+  },
+  {
+    title: "Marca",
     href: "/therapist/settings/branding",
-    icon: <Palette className="h-4 w-4" />,
+    icon: Palette,
+  },
+  {
+    title: "Comunicação",
+    href: "/therapist/settings/communication",
+    icon: MessageSquare,
+  },
+  {
+    title: "Documentos",
+    href: "/therapist/settings/documents",
+    icon: FileText,
+  },
+  {
+    title: "Lembretes",
+    href: "/therapist/settings/reminders",
+    icon: Clock,
   },
   {
     title: "Integrações",
     href: "/therapist/settings/integrations",
-    icon: <Link2 className="h-4 w-4" />,
+    icon: LinkIcon,
   },
 ]
 
@@ -53,21 +80,25 @@ export function SettingsNav() {
 
   return (
     <nav className="grid gap-1">
-      {items.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          className={cn(
-            "flex items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors",
-            pathname === item.href
-              ? "bg-accent text-accent-foreground"
-              : "hover:bg-accent hover:text-accent-foreground",
-          )}
-        >
-          {item.icon}
-          {item.title}
-        </Link>
-      ))}
+      {settingsLinks.map((link) => {
+        const Icon = link.icon
+        const isActive =
+          pathname === link.href || (link.href !== "/therapist/settings" && pathname?.startsWith(link.href))
+
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-all",
+              isActive ? "bg-primary text-primary-foreground" : "hover:bg-muted",
+            )}
+          >
+            <Icon className="h-4 w-4" />
+            <span>{link.title}</span>
+          </Link>
+        )
+      })}
     </nav>
   )
 }

@@ -8,12 +8,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Loader2, QrCode, RefreshCw, Save, Smartphone } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { WhatsAppMessagePreview } from "./whatsapp-message-preview"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 export function WhatsAppIntegration() {
   const [isLoading, setIsLoading] = useState(false)
@@ -109,267 +108,244 @@ export function WhatsAppIntegration() {
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Integração com WhatsApp</CardTitle>
-        <CardDescription>
-          Configure a integração com WhatsApp para permitir que seus clientes confirmem sessões diretamente pelo
-          aplicativo.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <Label htmlFor="enable-whatsapp" className="font-medium">
-              Ativar WhatsApp
-            </Label>
-            <p className="text-sm text-muted-foreground">
-              Ative a integração com WhatsApp para enviar e receber mensagens.
-            </p>
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>Integração com WhatsApp</CardTitle>
+          <CardDescription>
+            Configure a integração com WhatsApp para permitir que seus clientes confirmem sessões diretamente pelo
+            aplicativo.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label htmlFor="enable-whatsapp" className="font-medium">
+                Ativar WhatsApp
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Ative a integração com WhatsApp para enviar e receber mensagens.
+              </p>
+            </div>
+            <Switch id="enable-whatsapp" checked={settings.enabled} onCheckedChange={handleSwitchChange("enabled")} />
           </div>
-          <Switch id="enable-whatsapp" checked={settings.enabled} onCheckedChange={handleSwitchChange("enabled")} />
-        </div>
 
-        {settings.enabled && (
-          <>
-            <Separator />
+          {settings.enabled && (
+            <>
+              <Separator />
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Status da Conexão</h3>
+              <div className="space-y-4">
+                <h3 className="text-lg font-medium">Status da Conexão</h3>
 
-              {isConnected ? (
-                <Alert className="bg-green-50 border-green-200">
-                  <Smartphone className="h-4 w-4 text-green-600" />
-                  <AlertTitle className="text-green-600">WhatsApp Conectado</AlertTitle>
-                  <AlertDescription className="text-green-600">
-                    Seu WhatsApp está conectado e pronto para enviar e receber mensagens.
-                  </AlertDescription>
-                </Alert>
-              ) : (
-                <Alert>
-                  <Smartphone className="h-4 w-4" />
-                  <AlertTitle>WhatsApp Desconectado</AlertTitle>
-                  <AlertDescription>Conecte seu WhatsApp para começar a enviar e receber mensagens.</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="flex space-x-2">
-                {!isConnected ? (
-                  <Button onClick={handleConnect} disabled={isLoading}>
-                    {isLoading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Conectando...
-                      </>
-                    ) : (
-                      <>
-                        <QrCode className="mr-2 h-4 w-4" />
-                        Conectar WhatsApp
-                      </>
-                    )}
-                  </Button>
+                {isConnected ? (
+                  <Alert className="bg-green-50 border-green-200">
+                    <Smartphone className="h-4 w-4 text-green-600" />
+                    <AlertTitle className="text-green-600">WhatsApp Conectado</AlertTitle>
+                    <AlertDescription className="text-green-600">
+                      Seu WhatsApp está conectado e pronto para enviar e receber mensagens.
+                    </AlertDescription>
+                  </Alert>
                 ) : (
-                  <>
-                    <Button onClick={handleDisconnect} variant="outline" disabled={isLoading}>
+                  <Alert>
+                    <Smartphone className="h-4 w-4" />
+                    <AlertTitle>WhatsApp Desconectado</AlertTitle>
+                    <AlertDescription>Conecte seu WhatsApp para começar a enviar e receber mensagens.</AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="flex space-x-2">
+                  {!isConnected ? (
+                    <Button onClick={handleConnect} disabled={isLoading}>
                       {isLoading ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Desconectando...
+                          Conectando...
                         </>
                       ) : (
-                        "Desconectar"
+                        <>
+                          <QrCode className="mr-2 h-4 w-4" />
+                          Conectar WhatsApp
+                        </>
                       )}
                     </Button>
-                    <Button onClick={handleConnect} variant="outline" disabled={isLoading}>
-                      <RefreshCw className="mr-2 h-4 w-4" />
-                      Reconectar
-                    </Button>
-                  </>
+                  ) : (
+                    <>
+                      <Button onClick={handleDisconnect} variant="outline" disabled={isLoading}>
+                        {isLoading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Desconectando...
+                          </>
+                        ) : (
+                          "Desconectar"
+                        )}
+                      </Button>
+                      <Button onClick={handleConnect} variant="outline" disabled={isLoading}>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Reconectar
+                      </Button>
+                    </>
+                  )}
+                </div>
+
+                {isQrCodeVisible && (
+                  <div className="flex flex-col items-center space-y-4 p-4 border rounded-md">
+                    <p className="text-sm text-center">
+                      Escaneie o QR code abaixo com seu WhatsApp para conectar sua conta.
+                    </p>
+                    <div className="w-64 h-64 bg-gray-100 flex items-center justify-center">
+                      <img
+                        src="/placeholder.svg?key=rumfg"
+                        alt="QR Code para conexão do WhatsApp"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Este QR code expirará em 60 segundos. Clique em "Reconectar" se expirar.
+                    </p>
+                  </div>
                 )}
               </div>
 
-              {isQrCodeVisible && (
-                <div className="flex flex-col items-center space-y-4 p-4 border rounded-md">
-                  <p className="text-sm text-center">
-                    Escaneie o QR code abaixo com seu WhatsApp para conectar sua conta.
-                  </p>
-                  <div className="w-64 h-64 bg-gray-100 flex items-center justify-center">
-                    <img
-                      src="/placeholder.svg?key=vthtv"
-                      alt="QR Code para conexão do WhatsApp"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Este QR code expirará em 60 segundos. Clique em "Reconectar" se expirar.
-                  </p>
-                </div>
-              )}
-            </div>
+              <Separator />
 
-            <Separator />
+              <Tabs defaultValue="general" className="w-full">
+                <TabsList className="grid grid-cols-3 mb-4">
+                  <TabsTrigger value="general">Geral</TabsTrigger>
+                  <TabsTrigger value="messages">Mensagens</TabsTrigger>
+                  <TabsTrigger value="notifications">Notificações</TabsTrigger>
+                </TabsList>
 
-            <Tabs defaultValue="general" className="w-full">
-              <TabsList className="grid grid-cols-3 mb-4">
-                <TabsTrigger value="general">Geral</TabsTrigger>
-                <TabsTrigger value="messages">Mensagens</TabsTrigger>
-                <TabsTrigger value="notifications">Notificações</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="general" className="space-y-4">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="phone-number">Número de Telefone</Label>
-                    <Input
-                      id="phone-number"
-                      placeholder="+55 (11) 98765-4321"
-                      value={settings.phoneNumber}
-                      onChange={handleInputChange("phoneNumber")}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Este é o número que será usado para enviar mensagens aos clientes.
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="business-name">Nome do Negócio</Label>
-                    <Input
-                      id="business-name"
-                      placeholder="Consultório de Psicologia"
-                      value={settings.businessName}
-                      onChange={handleInputChange("businessName")}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Este nome será exibido nas mensagens enviadas aos clientes.
-                    </p>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="include-buttons" className="font-medium">
-                        Incluir Botões de Confirmação
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        Inclui botões "Confirmar" e "Recusar" nas mensagens de WhatsApp.
+                <TabsContent value="general" className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="phone-number">Número de Telefone</Label>
+                      <Input
+                        id="phone-number"
+                        placeholder="+55 (11) 98765-4321"
+                        value={settings.phoneNumber}
+                        onChange={handleInputChange("phoneNumber")}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Este é o número que será usado para enviar mensagens aos clientes.
                       </p>
                     </div>
-                    <Switch
-                      id="include-buttons"
-                      checked={settings.includeConfirmationButtons}
-                      onCheckedChange={handleSwitchChange("includeConfirmationButtons")}
-                    />
-                  </div>
-                </div>
-              </TabsContent>
 
-              <TabsContent value="messages" className="space-y-4">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="welcome-message">Mensagem de Boas-vindas</Label>
-                    <Input
-                      id="welcome-message"
-                      placeholder="Olá! Este é o sistema de confirmação de sessões..."
-                      value={settings.welcomeMessage}
-                      onChange={handleInputChange("welcomeMessage")}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmation-message">Mensagem de Confirmação</Label>
-                    <Input
-                      id="confirmation-message"
-                      placeholder="Obrigado por confirmar sua sessão..."
-                      value={settings.confirmationMessage}
-                      onChange={handleInputChange("confirmationMessage")}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="cancellation-message">Mensagem de Cancelamento</Label>
-                    <Input
-                      id="cancellation-message"
-                      placeholder="Entendemos que você não poderá comparecer..."
-                      value={settings.cancellationMessage}
-                      onChange={handleInputChange("cancellationMessage")}
-                    />
-                  </div>
-                </div>
-                <div className="mt-6 border-t pt-4">
-                  <h4 className="text-sm font-medium mb-2">Prévia da Mensagem</h4>
-                  <WhatsAppMessagePreview
-                    message={settings.welcomeMessage}
-                    businessName={settings.businessName || "BeTHERA"}
-                    includeButtons={settings.includeConfirmationButtons}
-                  />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="notifications" className="space-y-4">
-                <div className="grid gap-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="send-reminders" className="font-medium">
-                        Enviar Lembretes
-                      </Label>
-                      <p className="text-sm text-muted-foreground">Enviar lembretes de sessão via WhatsApp.</p>
-                    </div>
-                    <Switch
-                      id="send-reminders"
-                      checked={settings.sendReminders}
-                      onCheckedChange={handleSwitchChange("sendReminders")}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="send-receipts" className="font-medium">
-                        Enviar Recibos
-                      </Label>
-                      <p className="text-sm text-muted-foreground">Enviar recibos de pagamento via WhatsApp.</p>
-                    </div>
-                    <Switch
-                      id="send-receipts"
-                      checked={settings.sendReceipts}
-                      onCheckedChange={handleSwitchChange("sendReceipts")}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <Label htmlFor="notify-confirmation" className="font-medium">
-                        Notificar Confirmações
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        Receber notificações quando um cliente confirmar via WhatsApp.
+                    <div className="space-y-2">
+                      <Label htmlFor="business-name">Nome do Negócio</Label>
+                      <Input id="business-name" placeholder="Consultório de Psicologia" value={settings.businessName} />
+                      <p className="text-xs text-muted-foreground">
+                        Este é o nome que será exibido para seus clientes no WhatsApp.
                       </p>
                     </div>
-                    <Switch
-                      id="notify-confirmation"
-                      checked={settings.notifyOnConfirmation}
-                      onCheckedChange={handleSwitchChange("notifyOnConfirmation")}
-                    />
                   </div>
-                </div>
-              </TabsContent>
-            </Tabs>
-          </>
-        )}
-      </CardContent>
-      <CardFooter className="flex justify-end">
-        <Button onClick={handleSave} disabled={isLoading}>
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Salvando...
-            </>
-          ) : (
-            <>
-              <Save className="mr-2 h-4 w-4" />
-              Salvar Configurações
+                </TabsContent>
+
+                <TabsContent value="messages" className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="welcome-message">Mensagem de Boas-Vindas</Label>
+                      <Input
+                        id="welcome-message"
+                        placeholder="Olá! Este é o sistema de confirmação de sessões da BeTHERA..."
+                        value={settings.welcomeMessage}
+                        onChange={handleInputChange("welcomeMessage")}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Esta mensagem será enviada quando um cliente iniciar uma conversa com você.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmation-message">Mensagem de Confirmação</Label>
+                      <Input
+                        id="confirmation-message"
+                        placeholder="Obrigado por confirmar sua sessão..."
+                        value={settings.confirmationMessage}
+                        onChange={handleInputChange("confirmationMessage")}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Esta mensagem será enviada quando um cliente confirmar uma sessão.
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="cancellation-message">Mensagem de Cancelamento</Label>
+                      <Input
+                        id="cancellation-message"
+                        placeholder="Entendemos que você não poderá comparecer..."
+                        value={settings.cancellationMessage}
+                        onChange={handleInputChange("cancellationMessage")}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Esta mensagem será enviada quando um cliente cancelar uma sessão.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="include-confirmation-buttons">Incluir Botões de Confirmação</Label>
+                      <Switch
+                        id="include-confirmation-buttons"
+                        checked={settings.includeConfirmationButtons}
+                        onCheckedChange={handleSwitchChange("includeConfirmationButtons")}
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="notifications" className="space-y-4">
+                  <div className="grid gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="send-reminders">Enviar Lembretes</Label>
+                      <Switch
+                        id="send-reminders"
+                        checked={settings.sendReminders}
+                        onCheckedChange={handleSwitchChange("sendReminders")}
+                      />
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="send-receipts">Enviar Recibos</Label>
+                      <Switch
+                        id="send-receipts"
+                        checked={settings.sendReceipts}
+                        onCheckedChange={handleSwitchChange("sendReceipts")}
+                      />
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Label htmlFor="notify-on-confirmation">Notificar na Confirmação</Label>
+                      <Switch
+                        id="notify-on-confirmation"
+                        checked={settings.notifyOnConfirmation}
+                        onCheckedChange={handleSwitchChange("notifyOnConfirmation")}
+                      />
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+
+              <Separator />
+
+              <div className="flex justify-end">
+                <Button onClick={handleSave} disabled={isLoading}>
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Salvar Configurações
+                    </>
+                  )}
+                </Button>
+              </div>
             </>
           )}
-        </Button>
-      </CardFooter>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

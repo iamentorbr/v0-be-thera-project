@@ -1,50 +1,64 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { toast } from "@/components/ui/use-toast"
-import { Upload } from "lucide-react"
+import { Separator } from "@/components/ui/separator"
+import { Upload, X } from "lucide-react"
 
 const profileFormSchema = z.object({
   name: z.string().min(2, {
     message: "O nome deve ter pelo menos 2 caracteres.",
   }),
-  profession: z.string().min(2, {
-    message: "A profissão deve ter pelo menos 2 caracteres.",
+  email: z.string().email({
+    message: "Por favor, insira um email válido.",
   }),
-  specialization: z.string().optional(),
+  phone: z.string().min(10, {
+    message: "Por favor, insira um número de telefone válido.",
+  }),
   bio: z.string().max(500, {
     message: "A biografia não pode ter mais de 500 caracteres.",
   }),
-  education: z.string().optional(),
-  experience: z.string().optional(),
-  website: z.string().url({ message: "URL inválida" }).optional().or(z.literal("")),
-  phone: z.string().optional(),
+  specialties: z.string().max(200, {
+    message: "As especialidades não podem ter mais de 200 caracteres.",
+  }),
+  education: z.string().max(200, {
+    message: "A formação não pode ter mais de 200 caracteres.",
+  }),
+  website: z
+    .string()
+    .url({
+      message: "Por favor, insira uma URL válida.",
+    })
+    .optional()
+    .or(z.literal("")),
 })
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>
 
 const defaultValues: Partial<ProfileFormValues> = {
-  name: "João Silva",
-  profession: "Psicólogo",
-  specialization: "Terapia Cognitivo-Comportamental",
-  bio: "Psicólogo com mais de 10 anos de experiência em terapia cognitivo-comportamental, especializado em tratamento de ansiedade e depressão.",
-  education: "Mestrado em Psicologia Clínica - Universidade Federal",
-  experience: "10 anos",
-  website: "https://joaosilva.com.br",
+  name: "Dr. João Silva",
+  email: "joao.silva@bethera.com",
   phone: "(11) 98765-4321",
+  bio: "Psicólogo clínico com mais de 10 anos de experiência em terapia cognitivo-comportamental.",
+  specialties: "Ansiedade, Depressão, Estresse",
+  education: "Doutorado em Psicologia Clínica - USP",
+  website: "https://drjoaosilva.com.br",
 }
 
 export function ProfileSettings() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [avatar, setAvatar] = useState<string | null>("/letter-b-abstract.png")
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
@@ -53,170 +67,191 @@ export function ProfileSettings() {
   })
 
   function onSubmit(data: ProfileFormValues) {
-    setIsLoading(true)
+    toast({
+      title: "Perfil atualizado",
+      description: "Suas informações de perfil foram atualizadas com sucesso.",
+    })
+  }
 
-    // Simulação de envio para API
-    setTimeout(() => {
-      setIsLoading(false)
-      toast({
-        title: "Perfil atualizado",
-        description: "Suas informações de perfil foram atualizadas com sucesso.",
-      })
-    }, 1000)
+  function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (event) => {
+        setAvatar(event.target?.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  function removeAvatar() {
+    setAvatar(null)
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-6">
-        <Avatar className="h-24 w-24">
-          <AvatarImage src="/placeholder-user.jpg" alt="João Silva" />
-          <AvatarFallback>JS</AvatarFallback>
-        </Avatar>
-        <div>
-          <Button variant="outline" size="sm" className="mb-2">
-            <Upload className="mr-2 h-4 w-4" />
-            Alterar foto
-          </Button>
-          <p className="text-sm text-muted-foreground">JPG, PNG ou GIF. Tamanho máximo de 2MB.</p>
-        </div>
-      </div>
+    <div className="space-y-8">
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-6">
+            <div className="flex flex-col items-center sm:flex-row sm:items-start sm:space-x-6">
+              <div className="relative">
+                <Avatar className="h-24 w-24">
+                  <AvatarImage src={avatar || ""} alt="Avatar" />
+                  <AvatarFallback>JS</AvatarFallback>
+                </Avatar>
+                {avatar && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full bg-destructive text-destructive-foreground"
+                    onClick={removeAvatar}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+              <div className="mt-4 sm:mt-0 flex flex-col space-y-3">
+                <h4 className="text-sm font-medium">Foto de Perfil</h4>
+                <p className="text-sm text-muted-foreground">
+                  Esta foto será exibida em seu perfil e para seus clientes.
+                </p>
+                <div>
+                  <Label htmlFor="avatar" className="cursor-pointer">
+                    <div className="flex items-center gap-2 text-sm text-primary">
+                      <Upload className="h-4 w-4" />
+                      <span>Carregar imagem</span>
+                    </div>
+                  </Label>
+                  <Input id="avatar" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="name"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nome completo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Seu nome completo" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="profession"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Profissão</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Sua profissão" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="specialization"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Especialização</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Sua especialização" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="experience"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Anos de experiência</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="1-3">1-3 anos</SelectItem>
-                      <SelectItem value="4-6">4-6 anos</SelectItem>
-                      <SelectItem value="7-10">7-10 anos</SelectItem>
-                      <SelectItem value="10+">Mais de 10 anos</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="bio"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Biografia</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Conte um pouco sobre você e sua prática profissional"
-                    className="resize-none"
-                    {...field}
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <Card>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium">Informações Pessoais</h4>
+                <Separator />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nome Completo</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Seu nome completo" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
-                </FormControl>
-                <FormDescription>Esta biografia será exibida publicamente em seu perfil.</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input placeholder="seu.email@exemplo.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="phone"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Telefone</FormLabel>
+                        <FormControl>
+                          <Input placeholder="(00) 00000-0000" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="website"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Website</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://seusite.com.br" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <FormField
-            control={form.control}
-            name="education"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Formação acadêmica</FormLabel>
-                <FormControl>
-                  <Textarea placeholder="Descreva sua formação acadêmica" className="resize-none" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <Card>
+            <CardContent className="p-6 space-y-6">
+              <div className="space-y-4">
+                <h4 className="text-sm font-medium">Perfil Profissional</h4>
+                <Separator />
+                <FormField
+                  control={form.control}
+                  name="bio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Biografia</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Conte um pouco sobre você e sua experiência profissional..."
+                          className="min-h-[120px]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="specialties"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Especialidades</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Ansiedade, Depressão, Estresse" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="education"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Formação</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ex: Mestrado em Psicologia - UFRJ" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="website"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Website</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://seusite.com.br" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="phone"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Telefone de contato</FormLabel>
-                  <FormControl>
-                    <Input placeholder="(00) 00000-0000" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <div className="flex justify-end">
+            <Button type="submit">Salvar Alterações</Button>
           </div>
-
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Salvando..." : "Salvar alterações"}
-          </Button>
         </form>
       </Form>
     </div>
