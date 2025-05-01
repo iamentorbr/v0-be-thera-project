@@ -1,17 +1,23 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { Calendar, Clock, Users, CreditCard, TrendingUp, FileText, Video } from "lucide-react"
 import Link from "next/link"
+import { CreateSessionDialog } from "@/components/scheduling/create-session-dialog"
 
 export default function TherapistDashboard() {
+  const [showCreateSession, setShowCreateSession] = useState(false)
+
   return (
     <div className="flex flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
         <div className="flex items-center justify-between space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
           <div className="flex items-center space-x-2">
-            <Button>
+            <Button onClick={() => setShowCreateSession(true)}>
               <Calendar className="mr-2 h-4 w-4" />
               Agendar Sessão
             </Button>
@@ -221,14 +227,16 @@ export default function TherapistDashboard() {
                 <p className="text-sm text-muted-foreground">
                   Receba pagamentos diretamente pela plataforma, com gestão financeira completa.
                 </p>
-                <Button variant="link" size="sm" className="px-0" disabled>
-                  Em desenvolvimento
+                <Button variant="link" size="sm" className="px-0" asChild>
+                  <Link href="/therapist/payments">Ver pagamentos</Link>
                 </Button>
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
+
+      <CreateSessionDialog open={showCreateSession} onOpenChange={setShowCreateSession} />
     </div>
   )
 }
