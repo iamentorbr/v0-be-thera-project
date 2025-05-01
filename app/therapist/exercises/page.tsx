@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -6,9 +9,10 @@ import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Plus, Search, Filter, MoreVertical, Share2, Edit, Trash2, FileText } from "lucide-react"
 import Link from "next/link"
+import { ShareExerciseDialog, type Exercise } from "@/components/exercises/share-exercise-dialog"
 
 // Dados de exemplo para exercícios
-const exercisesData = [
+const exercisesData: Exercise[] = [
   {
     id: 1,
     title: "Respiração Diafragmática",
@@ -72,7 +76,7 @@ const exercisesData = [
 ]
 
 // Componente para o cartão de exercício
-function ExerciseCard({ exercise }: { exercise: (typeof exercisesData)[0] }) {
+function ExerciseCard({ exercise, onShare }: { exercise: Exercise; onShare: (exercise: Exercise) => void }) {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="pb-3">
@@ -89,7 +93,7 @@ function ExerciseCard({ exercise }: { exercise: (typeof exercisesData)[0] }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onShare(exercise)}>
                 <Share2 className="mr-2 h-4 w-4" />
                 <span>Compartilhar</span>
               </DropdownMenuItem>
@@ -121,6 +125,40 @@ function ExerciseCard({ exercise }: { exercise: (typeof exercisesData)[0] }) {
 }
 
 export default function ExercisesPage() {
+  const [searchQuery, setSearchQuery] = useState("")
+  const [shareDialogOpen, setShareDialogOpen] = useState(false)
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null)
+
+  const handleShareClick = (exercise: Exercise) => {
+    setSelectedExercise(exercise)
+    setShareDialogOpen(true)
+  }
+
+  const handleShareExercise = (clientIds: string[]) => {
+    // Aqui você implementaria a lógica real para compartilhar o exercício
+    console.log(`Compartilhando exercício ${selectedExercise?.id} com clientes:`, clientIds)
+
+    // Atualizar o estado local para refletir o compartilhamento
+    // Em uma implementação real, isso seria feito após uma chamada de API bem-sucedida
+    const updatedExercises = exercisesData.map((ex) =>
+      ex.id === selectedExercise?.id ? { ...ex, shared: ex.shared + clientIds.length } : ex,
+    )
+
+    // Em uma implementação real, você atualizaria o estado com os exercícios atualizados
+    // setExercisesData(updatedExercises);
+  }
+
+  // Filtrar exercícios com base na consulta de pesquisa
+  const filteredExercises =
+    searchQuery.trim() === ""
+      ? exercisesData
+      : exercisesData.filter(
+          (exercise) =>
+            exercise.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            exercise.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            exercise.category.toLowerCase().includes(searchQuery.toLowerCase()),
+        )
+
   return (
     <div className="flex flex-col">
       <div className="flex-1 space-y-4 p-8 pt-6">
@@ -146,7 +184,13 @@ export default function ExercisesPage() {
             <div className="flex gap-2">
               <div className="relative">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input type="search" placeholder="Buscar exercícios..." className="w-[250px] pl-8" />
+                <Input
+                  type="search"
+                  placeholder="Buscar exercícios..."
+                  className="w-[250px] pl-8"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
               <Button variant="outline" size="icon">
                 <Filter className="h-4 w-4" />
@@ -156,20 +200,32 @@ export default function ExercisesPage() {
 
           <TabsContent value="all" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {exercisesData.map((exercise) => (
-                <ExerciseCard key={exercise.id} exercise={exercise} />
+              {filteredExercises.map((exercise) => (
+                <ExerciseCard key={exercise.id} exercise={exercise} onShare={handleShareClick} />
               ))}
             </div>
+            {filteredExercises.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-40 border border-dashed rounded-lg">
+                <FileText className="h-10 w-10 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">Nenhum exercício encontrado</p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="shared" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {exercisesData
+              {filteredExercises
                 .filter((exercise) => exercise.shared > 0)
                 .map((exercise) => (
-                  <ExerciseCard key={exercise.id} exercise={exercise} />
+                  <ExerciseCard key={exercise.id} exercise={exercise} onShare={handleShareClick} />
                 ))}
             </div>
+            {filteredExercises.filter((ex) => ex.shared > 0).length === 0 && (
+              <div className="flex flex-col items-center justify-center h-40 border border-dashed rounded-lg">
+                <FileText className="h-10 w-10 text-muted-foreground mb-2" />
+                <p className="text-muted-foreground">Nenhum exercício compartilhado encontrado</p>
+              </div>
+            )}
           </TabsContent>
 
           <TabsContent value="drafts" className="space-y-4">
@@ -183,6 +239,15 @@ export default function ExercisesPage() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {selectedExercise && (
+        <ShareExerciseDialog
+          exercise={selectedExercise}
+          open={shareDialogOpen}
+          onOpenChange={setShareDialogOpen}
+          onShare={handleShareExercise}
+        />
+      )}
     </div>
   )
 }
