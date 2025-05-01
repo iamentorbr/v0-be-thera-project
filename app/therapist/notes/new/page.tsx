@@ -8,7 +8,6 @@ import { ChevronLeft, Save, X, Plus, Calendar, Clock, User } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -17,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarComponent } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { RichTextEditor } from "@/components/notes/rich-text-editor"
 
 // Dados simulados para clientes
 const mockClients = [
@@ -245,11 +245,11 @@ export default function NewNotePage() {
               <CardTitle>Conteúdo</CardTitle>
             </CardHeader>
             <CardContent>
-              <Textarea
+              <RichTextEditor
+                content={content}
+                onChange={setContent}
                 placeholder="Digite o conteúdo da sua anotação aqui..."
-                className="min-h-[200px]"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
+                minHeight="300px"
               />
             </CardContent>
           </Card>

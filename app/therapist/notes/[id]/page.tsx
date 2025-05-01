@@ -8,7 +8,6 @@ import { ChevronLeft, Save, X, Plus, Calendar, Clock, User, Trash2, Eye, EyeOff 
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
@@ -29,6 +28,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { Switch } from "@/components/ui/switch"
+import { RichTextEditor } from "@/components/notes/rich-text-editor"
+import { RichTextContent } from "@/components/notes/rich-text-content"
 
 // Dados simulados para clientes
 const mockClients = [
@@ -54,7 +55,7 @@ const mockNotes = [
     id: "1",
     title: "Primeira sessão com Maria",
     content:
-      "Cliente demonstrou ansiedade relacionada ao trabalho. Discutimos técnicas de respiração e mindfulness para gerenciar momentos de estresse.",
+      "<h2>Sessão Inicial</h2><p>Cliente demonstrou <strong>ansiedade</strong> relacionada ao trabalho. Discutimos técnicas de <em>respiração</em> e <em>mindfulness</em> para gerenciar momentos de estresse.</p><ul><li>Praticar respiração diafragmática 2x ao dia</li><li>Iniciar diário de gratidão</li><li>Reduzir cafeína</li></ul>",
     clientId: "1",
     clientName: "Maria Silva",
     date: "2023-04-01T14:00:00",
@@ -67,7 +68,7 @@ const mockNotes = [
     id: "2",
     title: "Plano de tratamento para João",
     content:
-      "Desenvolver estratégias para lidar com conflitos familiares. Focar em comunicação assertiva e estabelecimento de limites saudáveis.",
+      "<h2>Plano Terapêutico</h2><p>Desenvolver estratégias para lidar com <strong>conflitos familiares</strong>. Focar em <em>comunicação assertiva</em> e estabelecimento de limites saudáveis.</p><ol><li>Identificar padrões de comunicação disfuncionais</li><li>Praticar técnicas de escuta ativa</li><li>Estabelecer limites claros com familiares</li></ol>",
     clientId: "2",
     clientName: "João Santos",
     date: "2023-04-02T10:30:00",
@@ -80,7 +81,7 @@ const mockNotes = [
     id: "3",
     title: "Progresso de Carlos",
     content:
-      "Cliente tem mostrado melhora significativa nos sintomas de depressão. Continuar com exercícios de gratidão e exposição gradual a atividades sociais.",
+      "<h2>Avaliação de Progresso</h2><p>Cliente tem mostrado <strong>melhora significativa</strong> nos sintomas de depressão. Continuar com exercícios de <em>gratidão</em> e exposição gradual a atividades sociais.</p><ul><li>Manteve rotina de exercícios físicos</li><li>Participou de dois eventos sociais</li><li>Relatou melhora no sono</li></ul>",
     clientId: "3",
     clientName: "Carlos Oliveira",
     date: "2023-04-03T16:15:00",
@@ -93,7 +94,7 @@ const mockNotes = [
     id: "4",
     title: "Técnicas para Ana",
     content:
-      "Recomendei técnicas de aterramento para momentos de dissociação. Cliente deve praticar diariamente e registrar eficácia em diário.",
+      "<h2>Técnicas Recomendadas</h2><p>Recomendei técnicas de <strong>aterramento</strong> para momentos de dissociação. Cliente deve praticar diariamente e registrar eficácia em diário.</p><ol><li>Técnica 5-4-3-2-1 (visão, audição, tato, olfato, paladar)</li><li>Segurar objeto frio ou texturas diferentes</li><li>Respiração contada</li></ol>",
     clientId: "4",
     clientName: "Ana Pereira",
     date: "2023-04-04T11:00:00",
@@ -106,7 +107,7 @@ const mockNotes = [
     id: "5",
     title: "Observações sobre comportamento de Pedro",
     content:
-      "Cliente demonstra padrões de pensamento catastrófico. Introduzir reestruturação cognitiva nas próximas sessões.",
+      "<h2>Observações Clínicas</h2><p>Cliente demonstra padrões de <strong>pensamento catastrófico</strong>. Introduzir <em>reestruturação cognitiva</em> nas próximas sessões.</p><ul><li>Identificar pensamentos automáticos negativos</li><li>Questionar evidências que apoiam esses pensamentos</li><li>Desenvolver perspectivas alternativas</li></ul>",
     clientId: "5",
     clientName: "Pedro Alves",
     date: "2023-04-05T15:45:00",
@@ -487,11 +488,11 @@ export default function NotePage({ params }: { params: { id: string } }) {
                   <CardTitle>Conteúdo</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Textarea
+                  <RichTextEditor
+                    content={content}
+                    onChange={setContent}
                     placeholder="Digite o conteúdo da sua anotação aqui..."
-                    className="min-h-[200px]"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
+                    minHeight="300px"
                   />
                 </CardContent>
               </Card>
@@ -578,7 +579,7 @@ export default function NotePage({ params }: { params: { id: string } }) {
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="mt-4 whitespace-pre-wrap">{content}</div>
+                  <RichTextContent content={content} className="mt-4" />
 
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-6">
