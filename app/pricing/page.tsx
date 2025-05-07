@@ -46,13 +46,20 @@ export default function PricingPage() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                  Planos Flexíveis para Profissionais de Bem-estar
+                  Oferta Especial de Lançamento
                 </h1>
                 <p className="max-w-[700px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Escolha o plano ideal para sua prática e comece a transformar seu atendimento hoje mesmo.
+                  Aproveite o valor promocional de lançamento e garanta 12 meses de acesso com preço especial.
                 </p>
               </div>
               <PricingToggle />
+              <div className="mt-8 max-w-[800px] p-4 bg-primary/10 border border-primary/20 rounded-lg">
+                <p className="text-sm md:text-base font-medium text-primary">
+                  <span className="font-bold">Oferta Especial de Lançamento:</span> Adquira o plano START por apenas R$
+                  57/mês e mantenha esse valor por 12 meses! Após o período promocional e implementação de novos
+                  recursos, o plano START passará a custar R$ 97/mês para novos assinantes.
+                </p>
+              </div>
             </div>
           </div>
         </section>
@@ -62,20 +69,23 @@ export default function PricingPage() {
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-8">
               <PricingCard
-                name="Iniciante"
-                price={{ monthly: "R$ 49", annually: "R$ 39" }}
-                description="Ideal para profissionais em início de carreira ou com poucos clientes."
+                name="START"
+                price={{ monthly: "R$ 57", annually: "R$ 57" }}
+                description="Valor promocional de lançamento. Garanta esse preço por 12 meses!"
                 features={[
                   "Até 15 clientes ativos",
                   "Agendamento básico",
                   "Compartilhamento de conteúdo",
                   "Diário do cliente",
                   "Exercícios terapêuticos",
+                  "Acesso a todas as novas implementações",
                 ]}
                 limitations={["Sem videoconferência", "Sem personalização de marca"]}
-                ctaText="Começar Gratuitamente"
-                ctaLink="/register?plan=starter"
-                trialDays={14}
+                ctaText="Garantir Preço Promocional"
+                ctaLink="/register?plan=start"
+                trialDays={15}
+                popular={true}
+                promotionalInfo="Após 12 meses, o valor será R$ 97/mês"
               />
               <PricingCard
                 name="Profissional"
@@ -93,8 +103,8 @@ export default function PricingPage() {
                 limitations={["Personalização de marca limitada"]}
                 ctaText="Escolher Plano Profissional"
                 ctaLink="/register?plan=professional"
-                trialDays={14}
-                popular={true}
+                trialDays={15}
+                comingSoon={true}
               />
               <PricingCard
                 name="Empresarial"
@@ -114,7 +124,8 @@ export default function PricingPage() {
                 ]}
                 ctaText="Contatar Vendas"
                 ctaLink="/contact-sales"
-                trialDays={14}
+                trialDays={15}
+                comingSoon={true}
               />
             </div>
           </div>
@@ -155,17 +166,15 @@ export default function PricingPage() {
           <div className="container px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
-                  Pronto para Transformar sua Prática?
-                </h2>
+                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Garanta Já o Preço Promocional!</h2>
                 <p className="max-w-[700px] md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Comece hoje mesmo com 14 dias de teste gratuito. Sem compromisso.
+                  Apenas R$ 57/mês por 12 meses + 15 dias de teste gratuito. Oferta por tempo limitado.
                 </p>
               </div>
               <div className="flex flex-col gap-2 min-[400px]:flex-row">
                 <Link href="/register">
                   <Button size="lg" variant="secondary" className="gap-1">
-                    Começar Gratuitamente
+                    Garantir Oferta Especial
                   </Button>
                 </Link>
                 <Link href="/contact">
