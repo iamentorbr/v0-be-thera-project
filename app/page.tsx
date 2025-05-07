@@ -15,6 +15,15 @@ export default function Home() {
           </div>
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-2">
+              <Link href="/pricing">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 font-medium"
+                >
+                  SEJA BeThera
+                </Button>
+              </Link>
               <Link href="/login">
                 <Button variant="ghost" size="sm">
                   Entrar
