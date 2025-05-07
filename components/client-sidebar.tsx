@@ -2,17 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  Calendar,
-  Settings,
-  LogOut,
-  CreditCard,
-  MessageSquare,
-  FileAudio,
-  BookOpen,
-  Sparkles,
-  Video,
-} from "lucide-react"
+import { Calendar, Settings, LogOut, CreditCard, FileAudio, BookOpen, Video, Home, FileText } from "lucide-react"
 
 import {
   Sidebar,
@@ -44,8 +34,8 @@ export function ClientSidebar() {
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname === "/client/dashboard"}>
               <Link href="/client/dashboard">
-                <Sparkles className="mr-2 h-4 w-4" />
-                <span>Minha Jornada</span>
+                <Home className="mr-2 h-4 w-4" />
+                <span>Dashboard</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -58,41 +48,6 @@ export function ClientSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/client/video"}>
-              <Link href="/client/video">
-                <Video className="mr-2 h-4 w-4" />
-                <span>Sessões Online</span>
-              </Link>
-            </SidebarMenuButton>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2">
-              <ComingSoonBadge size="sm" />
-            </div>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/client/content"}>
-              <Link href="/client/content">
-                <FileAudio className="mr-2 h-4 w-4" />
-                <span>Meu Conteúdo</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/client/exercises"}>
-              <Link href="/client/exercises">
-                <BookOpen className="mr-2 h-4 w-4" />
-                <span>Exercícios</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/client/journal"}>
-              <Link href="/client/journal">
-                <MessageSquare className="mr-2 h-4 w-4" />
-                <span>Diário</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname === "/client/payments"}>
               <Link href="/client/payments">
                 <CreditCard className="mr-2 h-4 w-4" />
@@ -100,6 +55,53 @@ export function ClientSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+
+          {/* Funcionalidades que serão lançadas posteriormente */}
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <Video className="mr-2 h-4 w-4" />
+                <span>Videoconferência</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <FileAudio className="mr-2 h-4 w-4" />
+                <span>Conteúdo</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Exercícios</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Minha Jornada</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname === "/client/settings"}>
               <Link href="/client/settings">

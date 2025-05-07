@@ -56,33 +56,6 @@ export function TherapistSidebar() {
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/therapist/video"}>
-              <Link href="/therapist/video">
-                <Video className="mr-2 h-4 w-4" />
-                <span>Videoconferência</span>
-              </Link>
-            </SidebarMenuButton>
-            <div className="absolute right-0 top-1/2 -translate-y-1/2">
-              <ComingSoonBadge size="sm" />
-            </div>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/therapist/content"}>
-              <Link href="/therapist/content">
-                <FileAudio className="mr-2 h-4 w-4" />
-                <span>Biblioteca de Conteúdo</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild isActive={pathname === "/therapist/exercises"}>
-              <Link href="/therapist/exercises">
-                <BookOpen className="mr-2 h-4 w-4" />
-                <span>Exercícios</span>
-              </Link>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-          <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname.startsWith("/therapist/notes")}>
               <Link href="/therapist/notes">
                 <FileText className="mr-2 h-4 w-4" />
@@ -98,6 +71,42 @@ export function TherapistSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
+
+          {/* Funcionalidades que serão lançadas posteriormente */}
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <Video className="mr-2 h-4 w-4" />
+                <span>Videoconferência</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <FileAudio className="mr-2 h-4 w-4" />
+                <span>Biblioteca de Conteúdo</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild disabled className="opacity-60">
+              <div className="flex items-center">
+                <BookOpen className="mr-2 h-4 w-4" />
+                <span>Exercícios</span>
+                <div className="absolute right-0 top-1/2 -translate-y-1/2">
+                  <ComingSoonBadge size="sm" />
+                </div>
+              </div>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+
           <SidebarMenuItem>
             <SidebarMenuButton asChild isActive={pathname === "/therapist/settings"}>
               <Link href="/therapist/settings">
