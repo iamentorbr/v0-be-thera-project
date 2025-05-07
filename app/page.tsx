@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { MoonStar, Sparkles, Users, Calendar, FileText, MessageSquare } from "lucide-react"
 import { ComingSoonBadge } from "@/components/ui/coming-soon-badge"
@@ -27,8 +28,20 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48">
-          <div className="container px-4 md:px-6">
+        <section className="relative w-full py-12 md:py-24 lg:py-32 xl:py-48 overflow-hidden">
+          {/* Imagem de fundo com opacidade */}
+          <div className="absolute inset-0 z-0">
+            <Image
+              src="/images/hero-background.png"
+              alt="BETHERA background"
+              fill
+              className="object-cover opacity-55"
+              priority
+            />
+            <div className="absolute inset-0 bg-background/40 backdrop-blur-sm"></div>
+          </div>
+
+          <div className="container relative z-10 px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
