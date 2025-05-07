@@ -39,7 +39,7 @@ export function TherapistSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="sidebar-clients">
             <SidebarMenuButton asChild isActive={pathname === "/therapist/clients"}>
               <Link href="/therapist/clients">
                 <Users className="mr-2 h-4 w-4" />

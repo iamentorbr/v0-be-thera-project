@@ -39,7 +39,7 @@ export function ClientSidebar() {
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
-          <SidebarMenuItem>
+          <SidebarMenuItem className="sidebar-sessions">
             <SidebarMenuButton asChild isActive={pathname === "/client/sessions"}>
               <Link href="/client/sessions">
                 <Calendar className="mr-2 h-4 w-4" />

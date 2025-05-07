@@ -61,6 +61,7 @@
     "@tiptap/core": "latest",
     "@tiptap/pm": "latest",
     "@tiptap/extension-text-style": "latest",
+    "@emotion/is-prop-valid": "latest",
     "@tailwindcss/typography": "latest",
     "@tiptap/react": "latest",
     "@tiptap/starter-kit": "latest",
@@ -72,7 +73,9 @@
     "@tiptap/extension-color": "latest",
     "@tiptap/extension-highlight": "latest",
     "@tiptap/extension-task-list": "latest",
-    "@tiptap/extension-task-item": "latest"
+    "@tiptap/extension-task-item": "latest",
+    "@radix-ui/react-portal": "latest",
+    "framer-motion": "latest"
   },
   "devDependencies": {
     "@types/node": "^22",
