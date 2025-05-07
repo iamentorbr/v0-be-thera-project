@@ -2,7 +2,19 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Users, Calendar, FileText, Settings, LogOut, Home, CreditCard, FileAudio, BookOpen, Video } from "lucide-react"
+import {
+  Users,
+  Calendar,
+  FileText,
+  Settings,
+  LogOut,
+  Home,
+  CreditCard,
+  FileAudio,
+  BookOpen,
+  Video,
+  UserPlus,
+} from "lucide-react"
 
 import {
   Sidebar,
@@ -44,6 +56,14 @@ export function TherapistSidebar() {
               <Link href="/therapist/clients">
                 <Users className="mr-2 h-4 w-4" />
                 <span>Clientes</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild isActive={pathname === "/therapist/clients/invites"}>
+              <Link href="/therapist/clients/invites">
+                <UserPlus className="mr-2 h-4 w-4" />
+                <span>Convites</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

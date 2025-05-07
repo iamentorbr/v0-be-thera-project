@@ -29,9 +29,9 @@ export default function Home() {
                   Entrar
                 </Button>
               </Link>
-              <Link href="/register">
-                <Button size="sm">Cadastrar</Button>
-              </Link>
+              <Button asChild variant="ghost" size="sm">
+                <Link href="/register">Seja um Terapeuta</Link>
+              </Button>
             </nav>
           </div>
         </div>
