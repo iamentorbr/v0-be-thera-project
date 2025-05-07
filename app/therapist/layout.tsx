@@ -1,17 +1,20 @@
 import type React from "react"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 import { TherapistSidebar } from "@/components/therapist-sidebar"
-import { OnboardingNotification } from "@/components/onboarding/onboarding-notification"
-import { GuidedTour } from "@/components/onboarding/guided-tour"
+import { FloatingHelpButton } from "@/components/help/floating-help-button"
 
-export default function TherapistLayout({ children }: { children: React.ReactNode }) {
+export default function TherapistLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <div className="flex min-h-screen">
+    <SidebarProvider>
       <TherapistSidebar />
-      <main className="flex-1 overflow-y-auto">
+      <SidebarInset>
         {children}
-        <OnboardingNotification userType="therapist" />
-        <GuidedTour userType="therapist" />
-      </main>
-    </div>
+        <FloatingHelpButton userType="therapist" />
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
