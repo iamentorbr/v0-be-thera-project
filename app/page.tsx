@@ -41,43 +41,50 @@ export default function Home() {
           {/* Imagem de fundo com opacidade */}
           <div className="absolute inset-0 z-0">
             <Image
-              src="/images/hero-background.png"
-              alt="BETHERA background"
+              src="/images/management-dark-bg.png"
+              alt="BETHERA management background"
               fill
-              className="object-cover opacity-55"
+              className="object-cover"
               priority
             />
-            <div className="absolute inset-0 bg-background/40 backdrop-blur-sm"></div>
+            <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px]"></div>
           </div>
 
           <div className="container relative z-10 px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 xl:grid-cols-2">
               <div className="flex flex-col justify-center space-y-4">
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                  <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none text-white">
                     Eleve sua Prática com BETHERA
                   </h1>
-                  <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                  <p className="max-w-[600px] text-gray-200 md:text-xl">
                     A plataforma completa para terapeutas, tarólogos, astrólogos, psicólogos e coaches gerenciarem
                     clientes, sessões e muito mais.
                   </p>
                 </div>
                 <div className="flex flex-col gap-2 min-[400px]:flex-row">
                   <Link href="/register">
-                    <Button size="lg" className="gap-1">
+                    <Button
+                      size="lg"
+                      className="gap-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 border-0"
+                    >
                       <Sparkles className="h-4 w-4" />
                       Começar Agora
                     </Button>
                   </Link>
                   <Link href="#features">
-                    <Button size="lg" variant="outline">
+                    <Button
+                      size="lg"
+                      variant="outline"
+                      className="text-white border-white/70 hover:bg-white/10 hover:text-white"
+                    >
                       Saiba Mais
                     </Button>
                   </Link>
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <div className="relative h-[350px] w-[350px] rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 opacity-80 blur-2xl"></div>
+                <div className="relative h-[350px] w-[350px] rounded-full bg-gradient-to-r from-purple-500/70 to-indigo-500/70 opacity-80 blur-2xl"></div>
                 <div className="absolute flex items-center justify-center">
                   <MoonStar className="h-24 w-24 text-white" />
                 </div>
